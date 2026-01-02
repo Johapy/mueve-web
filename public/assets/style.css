@@ -1,0 +1,705 @@
+:root {
+    /* Paleta inspirada en la imagen de referencia (Over9k) */
+
+    /* Fondos */
+    --bg-color: #050505;
+    /* Fondo casi negro puro */
+    --surface-color: #121212;
+    /* Tarjetas gris muy oscuro */
+    --input-bg: #1e1e1e;
+    /* Inputs un poco más claros para contraste */
+
+    /* Bordes */
+    --border-color: #2a2a2a;
+    /* Bordes muy sutiles */
+
+    /* Textos */
+    --text-color: #e0e0e0;
+    /* Blanco humo */
+    --text-muted: #888888;
+    /* Gris medio */
+
+    /* Acciones */
+    --primary-color: #2F80ED;
+    /* Azul vibrante de la referencia */
+    --primary-hover: #1a6cdb;
+    --danger-color: #FF4D4D;
+    /* Rojo neón */
+    --success-color: #00CC66;
+    /* Verde neón */
+
+    /* Estilos Geométricos */
+    --border-radius: 24px;
+    /* Bordes muy redondeados como en la imagen */
+    --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* Reset básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* =========================================
+   SELECT EXPERIMENTAL (Appearance: base-select)
+   Adaptado al tema Over9k
+   ========================================= */
+
+/* Habilitar el nuevo comportamiento */
+select,
+::picker(select) {
+  appearance: base-select;
+}
+
+/* 1. Estilo del botón del Select (Input Trigger) */
+select {
+  /* Heredar estilos base de tus inputs */
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  border: 1px solid transparent; /* Mismo que tus inputs */
+  border-radius: 16px; /* Coincide con tu --border-radius de inputs */
+  padding: 14px 18px;
+  font-weight: 500;
+  width: 100%;
+  cursor: pointer;
+  
+  /* Flexbox para alinear texto e icono */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  
+  transition: var(--transition);
+}
+
+/* Hover y Focus del Trigger */
+select:hover,
+select:focus,
+select:active {
+  background-color: #252525;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(47, 128, 237, 0.2);
+}
+
+/* 2. El Icono de la flecha (Chevron) */
+select::picker-icon {
+  color: var(--text-muted);
+  font-size: 1.2em;
+  transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* Rotación al abrir */
+select:open::picker-icon {
+  transform: rotate(180deg);
+}
+
+/* 3. El Contenedor Desplegable (Popover) */
+::picker(select) {
+  /* Estilo tipo "Card" de tu sistema */
+  background-color: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: 16px; /* Radio consistente */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  padding: 8px; /* Un poco de padding interno para que las opciones no toquen el borde */
+  
+  /* Posicionamiento y Animación */
+  top: calc(anchor(bottom) + 8px); /* 8px de separación */
+  left: anchor(left);
+  width: anchor-size(width);
+  
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.3s ease, transform 0.3s ease, display 0.3s allow-discrete;
+}
+
+/* Estado abierto del Popover */
+::picker(select):popover-open {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Configuración inicial para la animación de entrada */
+@starting-style {
+  ::picker(select):popover-open {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+/* 4. Las Opciones Individuales */
+option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  
+  padding: 12px 16px;
+  margin-bottom: 2px;
+  border-radius: 12px; /* Radio interno ligeramente menor */
+  
+  background-color: transparent;
+  color: var(--text-muted);
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Hover en Opciones */
+option:hover,
+option:focus {
+  background-color: rgba(255, 255, 255, 0.05); /* Efecto sutil hover */
+  color: var(--text-color);
+  outline: none;
+}
+
+/* Opción Seleccionada */
+option:checked {
+  background-color: rgba(47, 128, 237, 0.1); /* Tint azul muy suave */
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+/* Iconos dentro de las opciones (si usas clases .icon en el HTML) */
+option .icon {
+  font-size: 1.4rem;
+  /* text-box: trim-both cap alphabetic; (Propiedad muy nueva, opcional) */
+}
+
+/* Checkmark personalizado */
+option::checkmark {
+  content: "✓"; /* O usar un icono font-awesome si prefieres */
+  margin-left: auto;
+  font-weight: bold;
+  color: var(--primary-color);
+  display: none; /* Oculto por defecto */
+}
+
+option:checked::checkmark {
+  display: block; /* Visible solo si está seleccionado */
+}
+
+/* Eliminar icono del valor seleccionado dentro del input cerrado para limpieza */
+selectedcontent .icon {
+  display: none; 
+}
+
+/* Clases de utilidad */
+.card {
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    /* Sombra suave */
+}
+
+/* Inputs estilizados */
+input,
+select {
+    background-color: var(--input-bg);
+    border: 1px solid transparent;
+    /* Sin borde por defecto para look limpio */
+    color: var(--text-color);
+    padding: 14px 18px;
+    border-radius: 16px;
+    outline: none;
+    width: 100%;
+    transition: var(--transition);
+    font-weight: 500;
+}
+
+input:focus,
+select:focus {
+    background-color: #252525;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(47, 128, 237, 0.2);
+}
+
+/* Botones */
+.btn-primary {
+    background-color: var(--primary-color);
+    color: #ffffff;
+    padding: 14px 24px;
+    border: none;
+    border-radius: 50px;
+    /* Botones tipo píldora */
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    transition: var(--transition);
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 15px rgba(47, 128, 237, 0.4);
+    /* Glow azul */
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(47, 128, 237, 0.6);
+}
+
+/* Layout */
+.dashboard-container {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 280px;
+    background-color: var(--bg-color);
+    /* Fondo integrado */
+    border-right: 1px solid var(--border-color);
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 100;
+}
+
+.sidebar h3 {
+    color: #fff;
+    margin-bottom: 40px;
+    padding-left: 10px;
+    font-size: 20px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.sidebar h3 i {
+    color: var(--primary-color);
+}
+
+.sidebar nav {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 20px;
+    color: var(--text-muted);
+    text-decoration: none;
+    border-radius: 18px;
+    transition: var(--transition);
+    font-weight: 500;
+}
+
+.nav-link i {
+    width: 20px;
+    text-align: center;
+    font-size: 16px;
+}
+
+.nav-link:hover {
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.nav-link.active {
+    background-color: var(--primary-color);
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(47, 128, 237, 0.3);
+}
+
+/* Main Content */
+.main-content {
+    flex: 1;
+    padding: 40px;
+    background-color: var(--bg-color);
+    overflow-y: auto;
+}
+
+.content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+}
+
+.content-header h2 {
+    font-size: 28px;
+    font-weight: 700;
+}
+
+/* Tarjeta de transacción */
+.transaction-card {
+    max-width: 550px;
+    margin: 0 auto;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Tabs tipo Toggle */
+.type-tabs {
+    display: flex;
+    background-color: #000;
+    padding: 6px;
+    border-radius: 20px;
+    margin-bottom: 30px;
+    border: 1px solid var(--border-color);
+    gap: 5px;
+}
+
+.tab-btn {
+    flex: 1;
+    text-align: center;
+    padding: 12px;
+    cursor: pointer;
+    border-radius: 16px;
+    color: var(--text-muted);
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+.tab-btn.active {
+    background-color: var(--surface-color);
+    color: #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+/* Colores condicionales en Tabs */
+.tab-btn[data-type="Comprar"].active {
+    color: var(--success-color);
+    background-color: rgba(0, 204, 102, 0.1);
+}
+
+.tab-btn[data-type="Vender"].active {
+    color: var(--danger-color);
+    background-color: rgba(255, 77, 77, 0.1);
+}
+
+/* Formulario */
+.form-group {
+    margin-bottom: 24px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 500;
+    font-size: 13px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.rate-display {
+    background: linear-gradient(135deg, rgba(47, 128, 237, 0.1), rgba(47, 128, 237, 0.02));
+    border: 1px solid rgba(47, 128, 237, 0.2);
+    color: var(--primary-color);
+    padding: 15px;
+    border-radius: 16px;
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 14px;
+}
+
+.btn-block {
+    width: 100%;
+}
+
+.flash-message {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 20px;
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+}
+
+/* Steps Animation */
+.step-content {
+    display: none;
+    animation: slideUp 0.4s ease-out;
+}
+
+.step-content.active-step {
+    display: block;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* --- Tabla Estilo Over9k --- */
+
+.table-responsive {
+    overflow-x: auto;
+    /* Para móviles */
+    background-color: var(--surface-color);
+    border-radius: var(--border-radius);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border-color);
+}
+
+table {
+    width: 100%;
+    border-collapse: separate;
+    /* Necesario para bordes redondeados */
+    border-spacing: 0;
+    font-size: 14px;
+}
+
+thead {
+    background-color: rgba(255, 255, 255, 0.03);
+}
+
+th {
+    padding: 18px 24px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+td {
+    padding: 20px 24px;
+    color: var(--text-color);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    vertical-align: middle;
+    transition: background-color 0.2s;
+}
+
+/* Hover effect en filas */
+tbody tr:hover td {
+    background-color: rgba(47, 128, 237, 0.05);
+    /* Azul muy sutil */
+}
+
+/* Última fila sin borde */
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Badges de Estado (Rediseñados) */
+.badge {
+    padding: 6px 12px;
+    border-radius: 50px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-block;
+}
+
+.badge-success {
+    background-color: rgba(0, 204, 102, 0.15);
+    color: var(--success-color);
+    box-shadow: 0 0 10px rgba(0, 204, 102, 0.2);
+    /* Glow verde */
+}
+
+.badge-pending {
+    background-color: rgba(255, 179, 0, 0.15);
+    color: #ffb300;
+    box-shadow: 0 0 10px rgba(255, 179, 0, 0.2);
+    /* Glow amarillo */
+}
+
+/* Tipografía de montos */
+.amount-usd {
+    font-weight: 700;
+    color: #fff;
+    font-family: 'Inter', monospace;
+    /* Monospace para números alineados */
+    font-size: 15px;
+}
+
+.amount-bs {
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
+/* ========================================
+           RESPONSIVE MOBILE DESIGN (Estilo iPhone)
+           ========================================
+        */
+@media (max-width: 768px) {
+    .dashboard-container {
+        flex-direction: column;
+    }
+
+    .main-content {
+        padding: 20px;
+        padding-bottom: 120px;
+        /* Espacio extra para que el menú no tape contenido */
+    }
+
+    .content-header h2 {
+        font-size: 22px;
+    }
+
+    .sidebar {
+        position: fixed;
+        bottom: 20px;
+        left: 5%;
+        width: 90%;
+        height: auto;
+        background-color: rgba(20, 20, 20, 0.85);
+        /* Vidrio oscuro */
+        backdrop-filter: blur(15px);
+        /* Efecto blur de iOS */
+        -webkit-backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 35px;
+        /* Forma de píldora flotante */
+        padding: 10px 20px;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
+        /* Reset del borde derecho */
+    }
+
+    /* Ocultar elementos innecesarios en el dock móvil */
+    .sidebar h3 {
+        display: none;
+    }
+
+    .sidebar div[style*="margin-top: auto"] {
+        /* Botón cerrar sesión lo convertimos en icono pequeño o lo ocultamos */
+        margin: 0 !important;
+        width: auto;
+    }
+
+    .sidebar div[style*="margin-top: auto"] form {
+        margin: 0;
+    }
+
+    .sidebar div[style*="margin-top: auto"] button {
+        width: 40px !important;
+        height: 40px;
+        padding: 0;
+        font-size: 0 !important;
+        /* Ocultar texto */
+        border: none !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        color: var(--danger-color);
+    }
+
+    .sidebar div[style*="margin-top: auto"] button::after {
+        content: '\f2f5';
+        /* FontAwesome Icon Sign Out */
+        font-family: "Font Awesome 6 Free";
+        font-weight: 900;
+        font-size: 16px;
+    }
+
+    .sidebar nav {
+        flex-direction: row;
+        width: 100%;
+        justify-content: space-around;
+        gap: 0;
+    }
+
+    .nav-link {
+        flex-direction: column;
+        padding: 10px;
+        gap: 5px;
+        border-radius: 50%;
+        /* Círculos en móvil */
+        width: 45px;
+        height: 45px;
+        justify-content: center;
+        margin: 0;
+    }
+
+    .nav-link i {
+        font-size: 18px;
+        margin: 0;
+    }
+
+    /* Ocultar texto de los links en móvil para estilo Dock */
+    .nav-link {
+        font-size: 0;
+    }
+
+    .nav-link.active {
+        background-color: var(--primary-color);
+        box-shadow: 0 4px 12px rgba(47, 128, 237, 0.5);
+    }
+
+    .table-responsive thead {
+        display: none;
+    }
+
+    /* 2. Convertimos la tabla y filas en bloques */
+    .table-responsive table,
+    .table-responsive tbody,
+    .table-responsive tr,
+    .table-responsive td {
+        display: block;
+        width: 100%;
+    }
+
+    /* 3. Estilo de cada "Tarjeta" (Fila) */
+    .table-responsive tr {
+        background-color: var(--surface-color);
+        margin-bottom: 20px;
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius);
+        padding: 15px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    /* 4. Estilo de cada Celda interna */
+    .table-responsive td {
+        padding: 10px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        display: flex;
+        justify-content: space-between;
+        /* Separa etiqueta y valor */
+        align-items: center;
+        text-align: right;
+        /* Alinea el valor a la derecha */
+    }
+
+    /* Quitamos el borde a la última celda de la tarjeta */
+    .table-responsive td:last-child {
+        border-bottom: none;
+    }
+
+    /* 5. Insertamos el título usando data-label */
+    .table-responsive td::before {
+        content: attr(data-label);
+        /* Toma el texto del HTML */
+        font-weight: 600;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        font-size: 11px;
+        letter-spacing: 0.5px;
+        margin-right: 15px;
+        text-align: left;
+    }
+}
