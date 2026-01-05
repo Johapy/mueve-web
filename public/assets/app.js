@@ -81,14 +81,25 @@ async function submitTransaction(e) {
 }
 
 // -----------------------------
-// Cálculo de comisiones avanzado
+// Cálculo de comisiones avanzado (por tramos)
 // -----------------------------
-// Comisión (porcentaje): 10% = 0.10 -> ajustar según necesidad
-const COMMISSION_RATE = 0.10;
-
 function round2(n){ return Math.round(n * 100) / 100; }
 function formatBs(n){ return new Intl.NumberFormat('es-VE').format(round2(n).toFixed(2)); }
 function formatUsd(n){ return round2(n).toFixed(2) + ' USD'; }
+
+// Comisión por tramos (reglas solicitadas):
+// 1 <= A < 10  -> 0.8 USD
+// 10 <= A < 15 -> 1.0 USD
+// 15 <= A <=25 -> 1.4 USD
+// A > 25       -> 1.4 USD + 8% sobre el monto que exceda 25
+function getCommissionUsd(amount){
+    const A = parseFloat(amount) || 0;
+    if (A >= 1 && A < 10) return 0.8;
+    if (A >= 10 && A < 15) return 1.0;
+    if (A >= 15 && A <= 25) return 1.4;
+    if (A > 25) return round2(1.4 + (A - 25) * 0.08);
+    return 0;
+}
 
 function calculateAndDisplay(){
     const amountUsdEl = document.getElementById('amountUsd');
@@ -99,7 +110,7 @@ function calculateAndDisplay(){
     const r = parseFloat(rateEl.value) || 0;
     const type = (typeEl.value || 'Comprar');
 
-    const commission_usd = round2(A * COMMISSION_RATE);
+    const commission_usd = getCommissionUsd(A);
 
     const commissionUsdEl = document.getElementById('commissionUsd');
     const commissionBsEl = document.getElementById('commissionBs');
