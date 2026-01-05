@@ -85,3 +85,78 @@ async function submitTransaction(e) {
         alert("Error de conexión");
     }
 }
+
+// -----------------------------
+// Cálculo de comisiones avanzado
+// -----------------------------
+// Comisión (porcentaje): 10% = 0.10 -> ajustar según necesidad
+const COMMISSION_RATE = 0.10;
+
+function round2(n){ return Math.round(n * 100) / 100; }
+function formatBs(n){ return new Intl.NumberFormat('es-VE').format(round2(n).toFixed(2)); }
+function formatUsd(n){ return round2(n).toFixed(2) + ' USD'; }
+
+function calculateAndDisplay(){
+    const amountUsdEl = document.getElementById('amountUsd');
+    const rateEl = document.getElementById('inputRate');
+    const typeEl = document.getElementById('inputType');
+
+    const A = parseFloat(amountUsdEl.value) || 0;
+    const r = parseFloat(rateEl.value) || 0;
+    const type = (typeEl.value || 'Comprar');
+
+    const commission_usd = round2(A * COMMISSION_RATE);
+
+    const commissionUsdEl = document.getElementById('commissionUsd');
+    const commissionBsEl = document.getElementById('commissionBs');
+    const netUsdEl = document.getElementById('netUsd');
+    const totalBsEl = document.getElementById('totalBs');
+    const amountBsInput = document.getElementById('amountBs');
+
+    if(type === 'Vender'){
+        const net_usd = round2(A - commission_usd);
+        const receive_bs = round2(net_usd * r);
+
+        if(commissionUsdEl) commissionUsdEl.textContent = formatUsd(commission_usd);
+        if(commissionBsEl) commissionBsEl.textContent = formatBs(commission_usd * r);
+        if(netUsdEl) netUsdEl.textContent = formatUsd(net_usd);
+        if(totalBsEl) totalBsEl.textContent = formatBs(receive_bs);
+        if(amountBsInput) amountBsInput.value = formatBs(receive_bs);
+
+        const netRow = document.getElementById('netUsdRow'); if(netRow) netRow.style.display = 'block';
+        const commissionBsRow = document.getElementById('commissionBsRow'); if(commissionBsRow) commissionBsRow.style.display = 'block';
+        const totalLabel = document.getElementById('totalLabel'); if(totalLabel) totalLabel.textContent = 'Recibirás (Bs):';
+    } else {
+        const gross_usd = round2(A + commission_usd);
+        const pay_bs = round2(gross_usd * r);
+        const commission_bs = round2(commission_usd * r);
+
+        if(commissionUsdEl) commissionUsdEl.textContent = formatUsd(commission_usd);
+        if(commissionBsEl) commissionBsEl.textContent = formatBs(commission_bs);
+        if(netUsdEl) netUsdEl.textContent = formatUsd(A);
+        if(totalBsEl) totalBsEl.textContent = formatBs(pay_bs);
+        if(amountBsInput) amountBsInput.value = formatBs(pay_bs);
+
+        const netRow = document.getElementById('netUsdRow'); if(netRow) netRow.style.display = 'none';
+        const commissionBsRow = document.getElementById('commissionBsRow'); if(commissionBsRow) commissionBsRow.style.display = 'block';
+        const totalLabel = document.getElementById('totalLabel'); if(totalLabel) totalLabel.textContent = 'Total a enviar (Bs):';
+    }
+}
+
+// Reutilizar la función existente setTransactionType (ya definida arriba) para recalcular
+const originalSetTransactionType = window.setTransactionType;
+window.setTransactionType = function(type){
+    if(typeof originalSetTransactionType === 'function') originalSetTransactionType(type);
+    calculateAndDisplay();
+}
+
+// Listeners adicionales
+document.addEventListener('DOMContentLoaded', function(){
+    const amountUsdEl = document.getElementById('amountUsd');
+    const rateEl = document.getElementById('inputRate');
+
+    if(amountUsdEl) amountUsdEl.addEventListener('input', calculateAndDisplay);
+    if(rateEl) rateEl.addEventListener('input', calculateAndDisplay);
+
+    calculateAndDisplay();
+});

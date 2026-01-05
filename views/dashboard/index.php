@@ -63,7 +63,18 @@
 
                     <div class="form-group">
                         <label>Recibes / Pagas en Bolívares (Bs)</label>
-                        <input type="text" id="amountBs" placeholder="0.00" readonly style="background-color: var(--surface-color); cursor: not-allowed;">
+                                                <input type="text" id="amountBs" placeholder="0.00" readonly style="background-color: var(--surface-color); cursor: not-allowed;">
+
+                                                <!-- Info de comisiones (añadido por snippet) -->
+                                                <div class="commission-info" style="margin-top:10px; font-size:14px; color:var(--text-muted);">
+                                                    <div id="commissionUsdRow">Comisión: <strong id="commissionUsd">0.00 USD</strong></div>
+                                                    <div id="commissionBsRow" style="display:block;">Comisión (Bs): <strong id="commissionBs">0.00 Bs</strong></div>
+                                                    <div id="netUsdRow" style="display:none;">USD netos para cambio: <strong id="netUsd">0.00 USD</strong></div>
+                                                    <div id="totalRow" style="margin-top:6px;">
+                                                        <span id="totalLabel">Total a enviar (Bs):</span>
+                                                        <strong id="totalBs" style="margin-left:6px;">0.00 Bs</strong>
+                                                    </div>
+                                                </div>
                     </div>
 
                     <button type="button" class="btn-primary btn-block" onclick="goToStep(2)">
