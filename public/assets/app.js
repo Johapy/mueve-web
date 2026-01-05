@@ -1,5 +1,5 @@
-// Variable global para la tasa (viene del PHP en el HTML, pero la leemos del input oculto)
-let currentRate = parseFloat(document.getElementById('inputRate').value);
+// Variable global para la tasa (se leerá dinámicamente desde el input oculto cuando sea necesario)
+let currentRate = 0;
 
 // 1. Manejo de Pestañas (Comprar / Vender)
 function setTransactionType(type) {
@@ -15,21 +15,15 @@ function setTransactionType(type) {
     // Opcional: Cambiar texto del botón o colores según sea compra/venta
 }
 
-// 2. Cálculo Automático
+// 2. Cálculo Automático (delegado a calculateAndDisplay)
 const amountUsdInput = document.getElementById('amountUsd');
 const amountBsInput = document.getElementById('amountBs');
 
-amountUsdInput.addEventListener('input', function () {
-    const usd = parseFloat(this.value);
-    if (!isNaN(usd)) {
-        // Cálculo simple
-        const bs = usd * currentRate;
-        // Formatear a 2 decimales
-        amountBsInput.value = bs.toFixed(2);
-    } else {
-        amountBsInput.value = '';
-    }
-});
+if(amountUsdInput){
+    amountUsdInput.addEventListener('input', function (){
+        calculateAndDisplay();
+    });
+}
 
 // 3. Sistema de Pasos (Wizard)
 function goToStep(stepNumber) {
