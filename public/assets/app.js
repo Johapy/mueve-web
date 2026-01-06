@@ -80,6 +80,111 @@ async function submitTransaction(e) {
     }
 }
 
+// ---------------------------------------------------------------------------------
+// Código para poblar selector de métodos de pago usando los datos inyectados por PHP
+// - No realiza fetch desde JS, usa window.PAYMENT_METHODS que fue generado por PHP
+// - Al seleccionar un método, se crean/actualizan campos ocultos en el formulario,
+//   incluido `recipient_account` (mail para Zinli/USDT o cadena con datos para PagoMovil)
+// ---------------------------------------------------------------------------------
+
+function ensureHiddenFields(){
+    const form = document.getElementById('transactionForm');
+    if(!form) return;
+    const names = ['payment_method_id','payment_owner_name','payment_bank','payment_phone','payment_ci','payment_mail','recipient_account'];
+    names.forEach(name => {
+        if(!form.querySelector('[name="'+name+'"]')){
+            const inp = document.createElement('input'); inp.type='hidden'; inp.name=name; form.appendChild(inp);
+        }
+    });
+}
+
+function buildRecipientAccount(method){
+    // Si existe mail_pay -> usarlo (Zinli / USDT)
+    if(method.mail_pay && method.mail_pay.length > 0) return method.mail_pay;
+    // Si es PagoMovil o tiene phone/bank/ci -> concatenar valores claros
+    const parts = [];
+    if(method.bank) parts.push('bank=' + method.bank);
+    if(method.ci) parts.push('ci=' + method.ci);
+    if(method.phone) parts.push('phone=' + method.phone);
+    if(method.owner_name) parts.push('owner=' + method.owner_name);
+    return parts.join('; ');
+}
+
+function updateHiddenFieldsFromMethod(method){
+    ensureHiddenFields();
+    const map = {
+        payment_method_id: method.id || '',
+        payment_owner_name: method.owner_name || '',
+        payment_bank: method.bank || '',
+        payment_phone: method.phone || '',
+        payment_ci: method.ci || '',
+        payment_mail: method.mail_pay || ''
+    };
+    map.recipient_account = buildRecipientAccount(method);
+
+    Object.keys(map).forEach(k => {
+        const el = document.querySelector('[name="'+k+'"]'); if(el) el.value = map[k];
+    });
+}
+
+function populateBankSelectFromInjectedData(){
+    const all = window.PAYMENT_METHODS || [];
+    const walletSelect = document.getElementById('walletSelect');
+    const bankSelect = document.getElementById('bankSelect');
+    const typeInput = document.getElementById('inputType');
+    if(!bankSelect) return;
+
+    const wallet = (walletSelect && walletSelect.value) ? walletSelect.value.toLowerCase() : 'zinli';
+    const transType = (typeInput && typeInput.value) ? typeInput.value : 'Comprar';
+
+    let filtered = all.slice();
+    if(transType === 'Vender'){
+        // Solo PagoMovil
+        filtered = filtered.filter(i => (i.type||'').toLowerCase() === 'pagomovil');
+    } else {
+        if(wallet === 'zinli') filtered = filtered.filter(i => (i.type||'').toLowerCase() === 'zinli');
+        else if(wallet === 'wally') filtered = filtered.filter(i => (i.type||'').toLowerCase() === 'pagomovil');
+        else if(wallet === 'usdt') filtered = filtered.filter(i => ((i.mail_pay||'') !== '') || (i.type||'').toLowerCase() === 'usdt');
+    }
+
+    bankSelect.innerHTML = '';
+    if(filtered.length === 0){
+        const opt = document.createElement('option'); opt.value=''; opt.textContent='No hay métodos guardados'; bankSelect.appendChild(opt);
+        updateHiddenFieldsFromMethod({});
+        return;
+    }
+
+    filtered.forEach(m => {
+        const opt = document.createElement('option');
+        opt.value = m.id;
+        opt.textContent = m.owner_name || m.bank || 'Método';
+        opt.dataset.method = JSON.stringify(m);
+        bankSelect.appendChild(opt);
+    });
+
+    // seleccionar primero y propagar
+    bankSelect.selectedIndex = 0;
+    const first = bankSelect.options[bankSelect.selectedIndex];
+    if(first){
+        const method = JSON.parse(first.dataset.method);
+        updateHiddenFieldsFromMethod(method);
+    }
+
+    bankSelect.addEventListener('change', function(){
+        const s = bankSelect.options[bankSelect.selectedIndex];
+        if(!s) return;
+        const method = JSON.parse(s.dataset.method);
+        updateHiddenFieldsFromMethod(method);
+    });
+
+    if(walletSelect) walletSelect.addEventListener('change', populateBankSelectFromInjectedData);
+}
+
+// Inicializar si PHP inyectó PAYMENT_METHODS
+document.addEventListener('DOMContentLoaded', function(){
+    if(window.PAYMENT_METHODS && window.PAYMENT_METHODS.length > 0) populateBankSelectFromInjectedData();
+});
+
 // -----------------------------
 // Cálculo de comisiones avanzado (por tramos)
 // -----------------------------

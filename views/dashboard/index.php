@@ -55,9 +55,41 @@
                     <div class="form-group">
                         <label>Selecciona tu banco</label>
                         <select name="bank" id="bankSelect">
-                            <option value="Banco de Venezuela">Banco de Venezuela</option>
-                            <option value="Banco Mercantil">Banco Mercantil</option>
-                            <option value="Banco Provincial">Banco Provincial</option>
+                            <?php
+                                // $payment_methods viene del controlador y contiene los métodos del usuario
+                                $methods = $payment_methods ?? [];
+                                // por defecto, mostrar métodos aplicables a la plataforma inicial (Zinli)
+                                $initialWallet = 'Zinli';
+                                $initialType = 'Comprar';
+
+                                $initialList = array_filter($methods, function($m) use ($initialWallet, $initialType) {
+                                    if (!isset($m['type'])) return false;
+                                    $type = strtolower($m['type']);
+                                    $wallet = strtolower($initialWallet);
+                                    if ($initialType === 'Vender') return $type === 'pagomovil';
+                                    if ($wallet === 'zinli') return $type === 'zinli';
+                                    if ($wallet === 'wally') return $type === 'pagomovil';
+                                    if ($wallet === 'usdt') return (!empty($m['mail_pay']) || $type === 'usdt');
+                                    return false;
+                                });
+
+                                if (empty($initialList)) {
+                                    echo "<option value=\"\">No hay métodos guardados</option>";
+                                } else {
+                                    foreach ($initialList as $method) {
+                                        $id = htmlspecialchars($method['id']);
+                                        $owner = htmlspecialchars($method['owner_name'] ?? ($method['bank'] ?? 'Método'));
+                                        $bank = htmlspecialchars($method['bank'] ?? '');
+                                        $phone = htmlspecialchars($method['phone'] ?? '');
+                                        $ci = htmlspecialchars($method['ci'] ?? '');
+                                        $mail = htmlspecialchars($method['mail_pay'] ?? '');
+                                        $type = htmlspecialchars($method['type'] ?? '');
+
+                                        // data-* contienen la información que JS usará para poblar hidden fields
+                                        echo "<option value=\"$id\" data-bank=\"$bank\" data-phone=\"$phone\" data-ci=\"$ci\" data-mail=\"$mail\" data-owner=\"" . htmlspecialchars($method['owner_name'] ?? '') . "\" data-type=\"$type\">$owner</option>";
+                                    }
+                                }
+                            ?>
                         </select>
                     </div>
 
@@ -108,6 +140,10 @@
 </div>
 
 <script src="/assets/app.js"></script>
+<script>
+    // Inyectar métodos de pago obtenidos por PHP para que JS los use sin fetch (token permanece en servidor)
+    window.PAYMENT_METHODS = <?php echo json_encode($payment_methods ?? []); ?>;
+</script>
 
 </body>
 </html>

@@ -21,6 +21,32 @@ class DashboardController extends Controller {
             'current_rate' => 310.94 // Simulamos la tasa actual (idealmente vendría de una API)
         ];
 
+        // SERVER-SIDE: obtener métodos de pago del API usando el token almacenado en la sesión.
+        // Hacemos esto en PHP para evitar exponer el token en el cliente y para no requerir
+        // que JS haga fetch con autorización.
+        $paymentMethods = [];
+        if (!empty($_SESSION['token'])) {
+            $ch = curl_init(API_URL . '/payments-methods');
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                "Authorization: Bearer " . $_SESSION['token'],
+                "Content-Type: application/json"
+            ]);
+
+            $response = curl_exec($ch);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+
+            if ($httpCode === 200) {
+                $json = json_decode($response, true);
+                // Esperamos un array de métodos, assignar o fallback a array vacío
+                $paymentMethods = is_array($json) ? $json : [];
+            }
+        }
+
+        // Pasamos los métodos a la vista para que el HTML los renderice sin fetch client-side
+        $data['payment_methods'] = $paymentMethods;
+
         $this->view('dashboard/index', $data);
     }
 
