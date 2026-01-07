@@ -258,6 +258,9 @@ function calculateAndDisplay(){
 const originalSetTransactionType = window.setTransactionType;
 window.setTransactionType = function(type){
     if(typeof originalSetTransactionType === 'function') originalSetTransactionType(type);
+    // Repoblar selector de métodos para reflejar el nuevo tipo (Comprar/Vender)
+    if(typeof populateBankSelectFromInjectedData === 'function') populateBankSelectFromInjectedData();
+    // Recalcular montos y labels
     calculateAndDisplay();
 }
 
