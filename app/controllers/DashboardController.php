@@ -18,7 +18,7 @@ class DashboardController extends Controller {
             'title' => APP_NAME . ' | Dashboard',
             'userMail' => $userMail,
             'userName' => $userName,
-            'current_rate' => 783.24 // Simulamos la tasa actual (idealmente vendría de una API)
+            'current_rate' => 784.39 // Simulamos la tasa actual (idealmente vendría de una API)
         ];
 
         // SERVER-SIDE: obtener métodos de pago del API usando el token almacenado en la sesión.
