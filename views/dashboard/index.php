@@ -68,8 +68,8 @@
                                     $wallet = strtolower($initialWallet);
                                     if ($initialType === 'Vender') return $type === 'pagomovil';
                                     if ($wallet === 'zinli') return $type === 'zinli';
-                                    if ($wallet === 'wally') return $type === 'pagomovil';
-                                    if ($wallet === 'usdt') return (!empty($m['mail_pay']) || $type === 'usdt');
+                                    if ($wallet === 'wally') return $type === 'wally';
+                                    if ($wallet === 'usdt') return $type === 'usdt';
                                     return false;
                                 });
 

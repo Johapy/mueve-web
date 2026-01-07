@@ -142,9 +142,10 @@ function populateBankSelectFromInjectedData(){
         // Solo PagoMovil
         filtered = filtered.filter(i => (i.type||'').toLowerCase() === 'pagomovil');
     } else {
+        // Mostrar únicamente métodos cuyo campo `type` coincide con la wallet seleccionada
         if(wallet === 'zinli') filtered = filtered.filter(i => (i.type||'').toLowerCase() === 'zinli');
-        else if(wallet === 'wally') filtered = filtered.filter(i => (i.type||'').toLowerCase() === 'pagomovil');
-        else if(wallet === 'usdt') filtered = filtered.filter(i => ((i.mail_pay||'') !== '') || (i.type||'').toLowerCase() === 'usdt');
+        else if(wallet === 'wally') filtered = filtered.filter(i => (i.type||'').toLowerCase() === 'wally');
+        else if(wallet === 'usdt') filtered = filtered.filter(i => (i.type||'').toLowerCase() === 'usdt');
     }
 
     bankSelect.innerHTML = '';
