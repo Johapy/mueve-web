@@ -47,6 +47,23 @@ class DashboardController extends Controller {
         // Pasamos los métodos a la vista para que el HTML los renderice sin fetch client-side
         $data['payment_methods'] = $paymentMethods;
 
+        // Obtener tasa actual desde la API (endpoint público)
+        $currentRate = 0;
+        $ch2 = curl_init(API_URL . '/rate');
+        curl_setopt($ch2, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch2, CURLOPT_HTTPHEADER, [
+            "Content-Type: application/json"
+        ]);
+        $rateResp = curl_exec($ch2);
+        $rateCode = curl_getinfo($ch2, CURLINFO_HTTP_CODE);
+        curl_close($ch2);
+        if ($rateCode === 200) {
+            $rateJson = json_decode($rateResp, true);
+            if (isset($rateJson['rate'])) $currentRate = floatval($rateJson['rate']);
+        }
+
+        $data['current_rate'] = $currentRate ?: ($data['current_rate'] ?? 0);
+
         $this->view('dashboard/index', $data);
     }
 
