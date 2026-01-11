@@ -92,6 +92,29 @@ class DashboardController extends Controller {
         $this->view('dashboard/history', $data);
     }
 
+    public function payment_methods() {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+
+        // 1. Protección
+        if (!isset($_SESSION['token'])) {
+            header('Location: /login');
+            exit;
+        }
+
+        // 2. Obtener TODAS las transacciones
+        // (Aquí podrías agregar lógica de paginación en el futuro)
+        $transactions = $this->fetchTransactions($_SESSION['token']);
+
+        // 3. Renderizar vista de historial
+        $data = [
+            'title' => 'Historial | ExchangeApp',
+            'userMail' => $_SESSION['email'],
+            'transactions' => $transactions
+        ];
+
+        $this->view('dashboard/payment-methods', $data);
+    }
+
     private function fetchTransactions($token) {
         $ch = curl_init(API_URL . '/transactions'); // Asumiendo GET
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
