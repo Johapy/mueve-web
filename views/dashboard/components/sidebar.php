@@ -5,7 +5,7 @@
 <?php $uri = $_SERVER['REQUEST_URI']; ?>
 
 <aside class="sidebar">
-    <h3><i class="fa-solid fa-wallet"></i> ExchangeApp</h3>
+    <h3><i class="fa-solid fa-wallet"></i> Mueve</h3>
     <nav>
         <a href="/dashboard" class="nav-link <?php echo ($uri == '/dashboard') ? 'active' : ''; ?>">
             <i class="fa-solid fa-chart-line"></i> 
@@ -14,9 +14,9 @@
             <i class="fa-solid fa-clock-rotate-left"></i> 
             <span>Historial</span>
         </a>
-        <a href="#" class="nav-link">
+        <a href="/payment-methods" class="nav-link <?php echo ($uri == '/payment-methods') ? 'active' : ''; ?>">
             <i class="fa-solid fa-user"></i> 
-            <span>Perfil</span>
+            <span>Pagos</span>
         </a>
     </nav>
     <div style="margin-top: auto;">

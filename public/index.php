@@ -16,6 +16,9 @@ $router->get('/login', 'AuthController@loginForm');
 $router->get('/register', 'AuthController@registerForm');
 $router->get('/', 'HomeController@index');
 $router->get('/history', 'DashboardController@history');
+$router->get('/payment-methods', 'PaymentMethodsController@index');
+
+$router->post('/payment-methods/add', 'PaymentMethodsController@add');
 $router->get('/payment-methods', 'DashboardController@payment_methods');
 
 $router->post('/login', 'AuthController@login');
