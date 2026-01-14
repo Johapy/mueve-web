@@ -5,107 +5,117 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $title; ?></title>
     <link rel="stylesheet" href="/assets/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
-<?php require_once __DIR__ . '/../dashboard/components/sidebar.php'; ?>
+<div class="dashboard-container">
+    <?php require_once __DIR__ . '/../dashboard/components/sidebar.php'; ?>
 
-<main class="main-content" style="padding:40px;">
-    <div class="container">
-        <h1 style="margin-bottom:20px;">Métodos de Pago</h1>
+    <main class="main-content">
 
-        <?php if(isset($_GET['added'])): ?>
-            <div class="flash-message" style="border-color:var(--secondary-color); margin-bottom:12px;">Método agregado correctamente.</div>
-        <?php endif; ?>
-        <?php if(isset($_GET['error'])): ?>
-            <div class="flash-message" style="border-color:crimson; margin-bottom:12px;">Error al agregar el método.</div>
-        <?php endif; ?>
-
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:24px; align-items:start;">
-            <div class="card">
-                <h3>Agregar Método</h3>
-                <form method="post" action="/payment-methods/add" id="addPaymentForm">
-                    <div class="form-group">
-                        <label>Tipo</label>
-                        <select name="type" id="pmType" required>
-                            <option value="Zinli">Zinli</option>
-                            <option value="Wally">Wally</option>
-                            <option value="USDT">USDT</option>
-                            <option value="PagoMovil">PagoMovil</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Nombre (owner_name)</label>
-                        <input type="text" name="owner_name" required>
-                    </div>
-
-                    <div id="mailRow" style="display:block;">
-                        <div class="form-group">
-                            <label>Email (mail_pay)</label>
-                            <input type="email" name="mail_pay" id="mailPayInput">
-                        </div>
-                    </div>
-
-                    <div id="pagomovilRows" style="display:none;">
-                        <div class="form-group">
-                            <label>CI</label>
-                            <input type="text" name="ci">
-                        </div>
-                        <div class="form-group">
-                            <label>Banco</label>
-                            <input type="text" name="bank">
-                        </div>
-                        <div class="form-group">
-                            <label>Teléfono</label>
-                            <input type="text" name="phone">
-                        </div>
-                    </div>
-
-                    <div style="display:flex; gap:10px; margin-top:12px;">
-                        <button type="submit" class="btn btn-primary">Agregar</button>
-                    </div>
-                </form>
-            </div>
-
-            <div class="card">
-                <h3>Listado de Métodos</h3>
-
-                <?php
-                    $methods = $payment_methods ?? [];
-                    if(empty($methods)){
-                        echo '<p class="text-muted">No hay métodos guardados aún.</p>';
-                    } else {
-                        // Agrupar por tipo
-                        $groups = [];
-                        foreach($methods as $m){
-                            $t = $m['type'] ?? 'Otros';
-                            $groups[$t][] = $m;
-                        }
-
-                        foreach($groups as $type => $items){
-                            echo "<h4 style=\"margin-top:12px;\">".htmlspecialchars($type)."</h4>";
-                            echo "<div style=\"display:flex;flex-direction:column;gap:8px;\">";
-                            foreach($items as $it){
-                                $owner = htmlspecialchars($it['owner_name'] ?? '');
-                                if(strtolower($type) === 'pagomovil'){
-                                    $ci = htmlspecialchars($it['ci'] ?? '');
-                                    $bank = htmlspecialchars($it['bank'] ?? '');
-                                    $phone = htmlspecialchars($it['phone'] ?? '');
-                                    echo "<div class=\"pm-item\"><strong>$owner</strong><br><span class=\"text-muted\">CI: $ci — Banco: $bank — Tel: $phone</span></div>";
-                                } else {
-                                    $mail = htmlspecialchars($it['mail_pay'] ?? '');
-                                    echo "<div class=\"pm-item\"><strong>$owner</strong><br><span class=\"text-muted\">Email: $mail</span></div>";
-                                }
-                            }
-                            echo "</div>";
-                        }
-                    }
-                ?>
+        <div class="content-header">
+            <div>
+                <h2>Métodos de Pago</h2>
+                <p style="color: var(--text-muted); margin-top: 5px;">Agregar y administrar tus métodos de cobro</p>
             </div>
         </div>
-    </div>
-</main>
+
+        <div class="card" style="margin-top: 16px;">
+            <?php if(isset($_GET['added'])): ?>
+                <div class="flash-message" style="border-color:var(--secondary-color); margin-bottom:12px;">Método agregado correctamente.</div>
+            <?php endif; ?>
+            <?php if(isset($_GET['error'])): ?>
+                <div class="flash-message" style="border-color:crimson; margin-bottom:12px;">Error al agregar el método.</div>
+            <?php endif; ?>
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:24px; align-items:start;">
+                <div>
+                    <h3>Agregar Método</h3>
+                    <form method="post" action="/payment-methods/add" id="addPaymentForm">
+                        <div class="form-group">
+                            <label>Tipo</label>
+                            <select name="type" id="pmType" required>
+                                <option value="Zinli">Zinli</option>
+                                <option value="Wally">Wally</option>
+                                <option value="USDT">USDT</option>
+                                <option value="PagoMovil">PagoMovil</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Nombre (owner_name)</label>
+                            <input type="text" name="owner_name" required>
+                        </div>
+
+                        <div id="mailRow" style="display:block;">
+                            <div class="form-group">
+                                <label>Email (mail_pay)</label>
+                                <input type="email" name="mail_pay" id="mailPayInput">
+                            </div>
+                        </div>
+
+                        <div id="pagomovilRows" style="display:none;">
+                            <div class="form-group">
+                                <label>CI</label>
+                                <input type="text" name="ci">
+                            </div>
+                            <div class="form-group">
+                                <label>Banco</label>
+                                <input type="text" name="bank">
+                            </div>
+                            <div class="form-group">
+                                <label>Teléfono</label>
+                                <input type="text" name="phone">
+                            </div>
+                        </div>
+
+                        <div style="display:flex; gap:10px; margin-top:12px;">
+                            <button type="submit" class="btn btn-primary">Agregar</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div>
+                    <h3>Listado de Métodos</h3>
+
+                    <?php
+                        $methods = $payment_methods ?? [];
+                        if(empty($methods)){
+                            echo '<p class="text-muted">No hay métodos guardados aún.</p>';
+                        } else {
+                            // Agrupar por tipo
+                            $groups = [];
+                            foreach($methods as $m){
+                                $t = $m['type'] ?? 'Otros';
+                                $groups[$t][] = $m;
+                            }
+
+                            foreach($groups as $type => $items){
+                                echo "<h4 style=\"margin-top:12px;\">".htmlspecialchars($type)."</h4>";
+                                echo "<div style=\"display:flex;flex-direction:column;gap:8px;\">";
+                                foreach($items as $it){
+                                    $owner = htmlspecialchars($it['owner_name'] ?? '');
+                                    if(strtolower($type) === 'pagomovil'){
+                                        $ci = htmlspecialchars($it['ci'] ?? '');
+                                        $bank = htmlspecialchars($it['bank'] ?? '');
+                                        $phone = htmlspecialchars($it['phone'] ?? '');
+                                        echo "<div class=\"pm-item\"><strong>$owner</strong><br><span class=\"text-muted\">CI: $ci — Banco: $bank — Tel: $phone</span></div>";
+                                    } else {
+                                        $mail = htmlspecialchars($it['mail_pay'] ?? '');
+                                        echo "<div class=\"pm-item\"><strong>$owner</strong><br><span class=\"text-muted\">Email: $mail</span></div>";
+                                    }
+                                }
+                                echo "</div>";
+                            }
+                        }
+                    ?>
+                </div>
+            </div>
+        </div>
+
+    </main>
+</div>
 
 <script>
     // Toggle fields según tipo seleccionado
