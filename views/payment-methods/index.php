@@ -96,15 +96,25 @@
                                 echo "<div style=\"display:flex;flex-direction:column;gap:8px;\">";
                                 foreach($items as $it){
                                     $owner = htmlspecialchars($it['owner_name'] ?? '');
+                                    $typeSafe = htmlspecialchars($it['type'] ?? '');
                                     if(strtolower($type) === 'pagomovil'){
                                         $ci = htmlspecialchars($it['ci'] ?? '');
                                         $bank = htmlspecialchars($it['bank'] ?? '');
                                         $phone = htmlspecialchars($it['phone'] ?? '');
-                                        echo "<div class=\"pm-item\"><strong>$owner</strong><br><span class=\"text-muted\">CI: $ci — Banco: $bank — Tel: $phone</span></div>";
+                                        $recipient = htmlspecialchars(trim(($phone ? $phone.' — ' : '') . ($bank ? $bank.' — ' : '') . $ci));
                                     } else {
-                                        $mail = htmlspecialchars($it['mail_pay'] ?? '');
-                                        echo "<div class=\"pm-item\"><strong>$owner</strong><br><span class=\"text-muted\">Email: $mail</span></div>";
+                                        $recipient = htmlspecialchars($it['mail_pay'] ?? '');
                                     }
+
+                                    echo "<div class=\"card pm-list-item\" style=\"padding:12px; border-radius:14px; display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:10px;\">";
+                                    echo "<div style=\"min-width:0;\">";
+                                    echo "<div style=\"font-weight:700; font-size:15px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;\">$owner</div>";
+                                    echo "<div style=\"color:var(--text-muted); font-size:13px; margin-top:6px;\">$typeSafe</div>";
+                                    echo "</div>";
+                                    echo "<div style=\"text-align:right; min-width:160px; max-width:260px;\">";
+                                    echo "<div style=\"font-weight:600; color:var(--primary-color); font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;\">$recipient</div>";
+                                    echo "</div>";
+                                    echo "</div>";
                                 }
                                 echo "</div>";
                             }
