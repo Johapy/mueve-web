@@ -115,12 +115,7 @@
                 </div>
 
                 <div id="step2" class="step-content">
-                    <div class="flash-message" style="margin-bottom: 20px; text-align: left; border-color: var(--primary-color);">
-                        <strong>Datos de Pago Móvil:</strong><br>
-                        <span class="text-muted">Banco:</span> Venezuela<br>
-                        <span class="text-muted">Teléfono:</span> 0412-1234567<br>
-                        <span class="text-muted">RIF:</span> J-123456789
-                    </div>
+                    <div id="paymentInfo" style="margin-bottom: 20px;"></div>
 
                     <div class="form-group">
                         <label>Referencia Bancaria (6 dígitos)</label>

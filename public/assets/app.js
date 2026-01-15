@@ -38,6 +38,9 @@ function goToStep(stepNumber) {
     // Ocultar todos, mostrar el deseado
     document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active-step'));
     document.getElementById('step' + stepNumber).classList.add('active-step');
+
+    // Si entramos al paso 2, renderizar la información de pago dinámica
+    if(stepNumber === 2 && typeof renderPaymentInfo === 'function') renderPaymentInfo();
 }
 
 // 4. Envío del Formulario (Submit)
@@ -176,6 +179,7 @@ function populateBankSelectFromInjectedData(){
         if(!s) return;
         const method = JSON.parse(s.dataset.method);
         updateHiddenFieldsFromMethod(method);
+        if(typeof renderPaymentInfo === 'function') renderPaymentInfo();
     });
 
     if(walletSelect) walletSelect.addEventListener('change', populateBankSelectFromInjectedData);
@@ -184,6 +188,100 @@ function populateBankSelectFromInjectedData(){
 // Inicializar si PHP inyectó PAYMENT_METHODS
 document.addEventListener('DOMContentLoaded', function(){
     if(window.PAYMENT_METHODS && window.PAYMENT_METHODS.length > 0) populateBankSelectFromInjectedData();
+});
+
+// -----------------------------
+// Render dinámico para Step 2
+// -----------------------------
+function renderPaymentInfo(){
+    const container = document.getElementById('paymentInfo');
+    if(!container) return;
+
+    const typeInput = document.getElementById('inputType');
+    const walletSelect = document.getElementById('walletSelect');
+    const bankSelect = document.getElementById('bankSelect');
+
+    const transType = (typeInput && typeInput.value) ? typeInput.value : 'Comprar';
+    const wallet = (walletSelect && walletSelect.value) ? walletSelect.value.toLowerCase() : '';
+
+    // Helper para leer hidden fields creados
+    function getHidden(name){
+        const el = document.querySelector('[name="'+name+'"]');
+        return el ? el.value : '';
+    }
+
+    // Limpiar
+    container.innerHTML = '';
+
+    if(transType === 'Vender'){
+        // Si vende a wallets tipo Zinli/Wally/USDT mostramos correo fijo
+        if(['zinli','wally','usdt'].includes(wallet)){
+            const html = `
+                <div class="flash-message" style="border-color: var(--primary-color); text-align:left;">
+                    <strong>Enviar a este correo:</strong><br>
+                    <div style="margin-top:8px; font-weight:700; color:var(--text-color);">yohanderjose2002@gmail.com</div>
+                    <div style="color:var(--text-muted); margin-top:6px; font-size:13px;">Usa este correo en la plataforma de destino para completar la recepción.</div>
+                </div>
+            `;
+            container.innerHTML = html;
+            return;
+        }
+        // Si vende pero el método es PagoMovil, intentar mostrar datos del método seleccionado
+        const owner = getHidden('payment_owner_name');
+        const phone = getHidden('payment_phone');
+        const bank = getHidden('payment_bank');
+        const ci = getHidden('payment_ci');
+
+        if(owner || phone || bank || ci){
+            container.innerHTML = `
+                <div class="flash-message" style="border-color: var(--primary-color); text-align:left;">
+                    <strong>Datos de Pago Móvil:</strong><br>
+                    <span class="text-muted">Titular:</span> ${owner || '-'}<br>
+                    <span class="text-muted">Teléfono:</span> ${phone || '-'}<br>
+                    <span class="text-muted">Banco:</span> ${bank || '-'}<br>
+                    <span class="text-muted">CI/RIF:</span> ${ci || '-'}
+                </div>
+            `;
+            return;
+        }
+
+        // Fallback
+        container.innerHTML = `<div class="flash-message">No se han encontrado datos del método seleccionado.</div>`;
+        return;
+    }
+
+    // Si es Comprar (u otro), mostrar los datos de PagoMovil (normal)
+    const owner = getHidden('payment_owner_name');
+    const phone = getHidden('payment_phone');
+    const bank = getHidden('payment_bank');
+    const ci = getHidden('payment_ci');
+
+    if(owner || phone || bank || ci){
+        container.innerHTML = `
+            <div class="flash-message" style="border-color: var(--primary-color); text-align:left;">
+                <strong>Datos de Pago Móvil:</strong><br>
+                <span class="text-muted">Titular:</span> ${owner || '-'}<br>
+                <span class="text-muted">Teléfono:</span> ${phone || '-'}<br>
+                <span class="text-muted">Banco:</span> ${bank || '-'}<br>
+                <span class="text-muted">CI/RIF:</span> ${ci || '-'}
+            </div>
+        `;
+        return;
+    }
+
+    // Si no hay datos, instrucción genérica
+    container.innerHTML = `<div class="flash-message">Selecciona un método en el paso anterior para ver los datos aquí.</div>`;
+}
+
+// Llamar renderPaymentInfo cuando cambian selectores relevantes
+document.addEventListener('DOMContentLoaded', function(){
+    const wallet = document.getElementById('walletSelect');
+    const bank = document.getElementById('bankSelect');
+    const typeInput = document.getElementById('inputType');
+
+    if(wallet) wallet.addEventListener('change', function(){ if(typeof populateBankSelectFromInjectedData === 'function') populateBankSelectFromInjectedData(); if(typeof renderPaymentInfo === 'function') renderPaymentInfo(); });
+    if(bank) bank.addEventListener('change', function(){ if(typeof renderPaymentInfo === 'function') renderPaymentInfo(); });
+    if(typeInput) typeInput.addEventListener('change', function(){ if(typeof renderPaymentInfo === 'function') renderPaymentInfo(); });
 });
 
 // -----------------------------
