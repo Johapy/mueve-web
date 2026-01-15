@@ -29,7 +29,7 @@
                 <div class="flash-message" style="border-color:crimson; margin-bottom:12px;">Error al agregar el método.</div>
             <?php endif; ?>
 
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:24px; align-items:start;">
+            <div style="display:flex; flex-direction:column; gap:24px;">
                 <div>
                     <h3>Agregar Método</h3>
                     <form method="post" action="/payment-methods/add" id="addPaymentForm">
@@ -77,49 +77,50 @@
                 </div>
 
                 <div>
-                    <h3>Listado de Métodos</h3>
+                    <h3 style="margin-top:8px;">Listado de Métodos</h3>
+                    <div class="card" style="margin-top:12px; padding:14px;">
+                        <?php
+                            $methods = $payment_methods ?? [];
+                            if(empty($methods)){
+                                echo '<p class="text-muted">No hay métodos guardados aún.</p>';
+                            } else {
+                                // Agrupar por tipo
+                                $groups = [];
+                                foreach($methods as $m){
+                                    $t = $m['type'] ?? 'Otros';
+                                    $groups[$t][] = $m;
+                                }
 
-                    <?php
-                        $methods = $payment_methods ?? [];
-                        if(empty($methods)){
-                            echo '<p class="text-muted">No hay métodos guardados aún.</p>';
-                        } else {
-                            // Agrupar por tipo
-                            $groups = [];
-                            foreach($methods as $m){
-                                $t = $m['type'] ?? 'Otros';
-                                $groups[$t][] = $m;
-                            }
+                                foreach($groups as $type => $items){
+                                    echo "<h4 style=\"margin-top:12px;\">".htmlspecialchars($type)."</h4>";
+                                    echo "<div style=\"display:flex;flex-direction:column;gap:8px; margin-top:8px;\">";
+                                    foreach($items as $it){
+                                        $owner = htmlspecialchars($it['owner_name'] ?? '');
+                                        $typeSafe = htmlspecialchars($it['type'] ?? '');
+                                        if(strtolower($type) === 'pagomovil'){
+                                            $ci = htmlspecialchars($it['ci'] ?? '');
+                                            $bank = htmlspecialchars($it['bank'] ?? '');
+                                            $phone = htmlspecialchars($it['phone'] ?? '');
+                                            $recipient = htmlspecialchars(trim(($phone ? $phone.' — ' : '') . ($bank ? $bank.' — ' : '') . $ci));
+                                        } else {
+                                            $recipient = htmlspecialchars($it['mail_pay'] ?? '');
+                                        }
 
-                            foreach($groups as $type => $items){
-                                echo "<h4 style=\"margin-top:12px;\">".htmlspecialchars($type)."</h4>";
-                                echo "<div style=\"display:flex;flex-direction:column;gap:8px;\">";
-                                foreach($items as $it){
-                                    $owner = htmlspecialchars($it['owner_name'] ?? '');
-                                    $typeSafe = htmlspecialchars($it['type'] ?? '');
-                                    if(strtolower($type) === 'pagomovil'){
-                                        $ci = htmlspecialchars($it['ci'] ?? '');
-                                        $bank = htmlspecialchars($it['bank'] ?? '');
-                                        $phone = htmlspecialchars($it['phone'] ?? '');
-                                        $recipient = htmlspecialchars(trim(($phone ? $phone.' — ' : '') . ($bank ? $bank.' — ' : '') . $ci));
-                                    } else {
-                                        $recipient = htmlspecialchars($it['mail_pay'] ?? '');
+                                        echo "<div class=\"card pm-list-item\" style=\"padding:12px; border-radius:14px; display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:10px;\">";
+                                        echo "<div style=\"min-width:0;\">";
+                                        echo "<div style=\"font-weight:700; font-size:15px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;\">$owner</div>";
+                                        echo "<div style=\"color:var(--text-muted); font-size:13px; margin-top:6px;\">$typeSafe</div>";
+                                        echo "</div>";
+                                        echo "<div style=\"text-align:right; min-width:160px; max-width:260px;\">";
+                                        echo "<div style=\"font-weight:600; color:var(--primary-color); font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;\">$recipient</div>";
+                                        echo "</div>";
+                                        echo "</div>";
                                     }
-
-                                    echo "<div class=\"card pm-list-item\" style=\"padding:12px; border-radius:14px; display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:10px;\">";
-                                    echo "<div style=\"min-width:0;\">";
-                                    echo "<div style=\"font-weight:700; font-size:15px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;\">$owner</div>";
-                                    echo "<div style=\"color:var(--text-muted); font-size:13px; margin-top:6px;\">$typeSafe</div>";
-                                    echo "</div>";
-                                    echo "<div style=\"text-align:right; min-width:160px; max-width:260px;\">";
-                                    echo "<div style=\"font-weight:600; color:var(--primary-color); font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;\">$recipient</div>";
-                                    echo "</div>";
                                     echo "</div>";
                                 }
-                                echo "</div>";
                             }
-                        }
-                    ?>
+                        ?>
+                    </div>
                 </div>
             </div>
         </div>
