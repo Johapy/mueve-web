@@ -195,6 +195,12 @@ document.addEventListener('DOMContentLoaded', function(){
 // -----------------------------
 function renderPaymentInfo(){
     const container = document.getElementById('paymentInfo');
+    const owner = 'Mueve';
+    const phone = '0424-3354141';
+    const bank = 'BNC - 0191';
+    const ci = '29.846.137';
+
+
     if(!container) return;
 
     const typeInput = document.getElementById('inputType');
@@ -227,10 +233,6 @@ function renderPaymentInfo(){
             return;
         }
         // Si vende pero el método es PagoMovil, intentar mostrar datos del método seleccionado
-        const owner = getHidden('payment_owner_name');
-        const phone = getHidden('payment_phone');
-        const bank = getHidden('payment_bank');
-        const ci = getHidden('payment_ci');
 
         if(owner || phone || bank || ci){
             container.innerHTML = `
@@ -251,10 +253,6 @@ function renderPaymentInfo(){
     }
 
     // Si es Comprar (u otro), mostrar los datos de PagoMovil (normal)
-    const owner = getHidden('payment_owner_name');
-    const phone = getHidden('payment_phone');
-    const bank = getHidden('payment_bank');
-    const ci = getHidden('payment_ci');
 
     if(owner || phone || bank || ci){
         container.innerHTML = `
