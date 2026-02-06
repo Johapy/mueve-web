@@ -96,7 +96,7 @@ class AuthController extends Controller
                     exit;
                 } else {
                     // El token fue alterado o la clave secreta no coincide
-                    $this->view('auth/login', ['title' => 'Iniciar Sesión', 'error' => 'Error de seguridad: Token inválido']);
+                    $this->view('auth/login', ['title' => 'Iniciar Sesión', 'error' => 'Error de seguridad: Token inválido', 'icon' => ICON_PATH]);
                     return;
                 }
             }
@@ -139,7 +139,7 @@ class AuthController extends Controller
             exit;
         } else {
             $error = $responseData['error'] ?? 'Error en el registro';
-            $this->view('auth/register', ['title' => 'Registro', 'error' => $error]);
+            $this->view('auth/register', ['title' => 'Registro', 'error' => $error, 'icon' => ICON_PATH]);
         }
     }
 

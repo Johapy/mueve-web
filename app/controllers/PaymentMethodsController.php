@@ -34,6 +34,7 @@ class PaymentMethodsController extends Controller {
 
         $data = [
             'title' => APP_NAME . ' | Métodos de Pago',
+            'icon' => ICON_PATH,
             'userMail' => $userMail,
             'userName' => $userName,
             'payment_methods' => $methods

@@ -16,6 +16,7 @@ class DashboardController extends Controller {
 
         $data = [
             'title' => APP_NAME . ' | Dashboard',
+            'icon' => ICON_PATH,
             'userMail' => $userMail,
             'userName' => $userName
         ];
@@ -83,7 +84,8 @@ class DashboardController extends Controller {
 
         // 3. Renderizar vista de historial
         $data = [
-            'title' => 'Historial | ExchangeApp',
+            'title' => 'Historial | Mueve',
+            'icon' => ICON_PATH,
             'userMail' => $_SESSION['email'],
             'transactions' => $transactions
         ];
@@ -106,7 +108,8 @@ class DashboardController extends Controller {
 
         // 3. Renderizar vista de historial
         $data = [
-            'title' => 'Historial | ExchangeApp',
+            'title' => 'Métodos de Pago | Mueve',
+            'icon' => ICON_PATH,
             'userMail' => $_SESSION['email'],
             'transactions' => $transactions
         ];
