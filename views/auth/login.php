@@ -222,7 +222,7 @@
         <div class="auth-card">
             <div class="auth-header">
                 <!-- Icono de marca -->
-                <i class="fa-solid fa-wallet logo-icon"></i>
+                <img class="logo-icon" src="/assets/mueve.ico" alt="Logo de Mueve">
                 <h2>Bienvenido</h2>
                 <p>Ingresa a tu panel de divisas</p>
             </div>
