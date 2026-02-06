@@ -253,8 +253,10 @@ select:focus {
 /* Layout */
 .dashboard-container {
     display: flex;
-    min-height: 100vh;
+    height: 100vh;
     width: 100%;
+    align-items: flex-start;
+    overflow: hidden;
 }
 
 /* Sidebar */
@@ -266,7 +268,9 @@ select:focus {
     padding: 30px;
     display: flex;
     flex-direction: column;
-    position: relative;
+    position: sticky;
+    top: 0;
+    height: 100vh;
     z-index: 100;
 }
 
@@ -326,6 +330,7 @@ select:focus {
     padding: 40px;
     background-color: var(--bg-color);
     overflow-y: auto;
+    height: 100vh;
 }
 
 .content-header {
