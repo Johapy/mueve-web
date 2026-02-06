@@ -561,7 +561,9 @@ tbody tr:last-child td {
         bottom: 20px;
         left: 5%;
         width: 90%;
-        height: auto;
+        height: 70px;
+        max-height: 80px;
+        overflow: hidden;
         background-color: rgba(20, 20, 20, 0.85);
         /* Vidrio oscuro */
         backdrop-filter: blur(15px);
@@ -570,7 +572,7 @@ tbody tr:last-child td {
         border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 35px;
         /* Forma de píldora flotante */
-        padding: 10px 20px;
+        padding: 8px 16px;
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
