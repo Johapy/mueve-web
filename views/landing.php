@@ -6,9 +6,10 @@
     <meta name="description" content="Cambia tus Bolívares a Zinli o Wally al instante con Mueve. La plataforma de intercambio más rápida y segura de Venezuela. Recarga tu billetera digital hoy mismo.">
     <meta name="keywords" content="recargar zinli venezuela, recargar wally bolívares, cambiar saldo zinli, exchange venezuela, dolares zinli, mueve app">
     <meta name="author" content="Mueve Exchange">
+    <link rel="icon" type="image/x-icon" href="/assets/mueve.ico">
     <meta property="og:title" content="Mueve | Recarga Zinli y Wally con Bolívares al instante">
     <meta property="og:description" content="Olvídate de las complicaciones. Mueve tu dinero de Bolívares a Dólares en segundos. Tasa competitiva y seguridad total.">
-    <meta property="og:image" content="https://mueve.net/og-image.jpg"> <!-- Reemplazar con imagen real -->
+    <meta property="og:image" content="/assets/mueve1.png"> <!-- Reemplazar con imagen real -->
     <meta property="og:type" content="website">
     
     <title>Mueve | Recarga Zinli y Wally en Venezuela - Rápido y Seguro</title>

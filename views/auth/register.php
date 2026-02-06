@@ -222,7 +222,7 @@
             <div class="auth-header">
                 <!-- Icono de marca -->
                 <i class="fa-solid fa-wallet logo-icon"></i>
-                <h2>Bienvenido</h2>
+                <h2>Registro</h2>
                 <p>Ingresa a tu panel de divisas</p>
             </div>
 
@@ -274,7 +274,7 @@
             </form>
 
             <div class="auth-footer">
-                <p>¿No tienes cuenta? <a href="/register">Regístrate aquí</a></p>
+                <p>¿Ya tienes cuenta? <a href="/login">Entra aquí</a></p>
             </div>
         </div>
 
