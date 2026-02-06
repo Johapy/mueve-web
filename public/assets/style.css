@@ -326,7 +326,6 @@ select:focus {
     padding: 40px;
     background-color: var(--bg-color);
     overflow-y: auto;
-    height: 100vh;
 }
 
 .content-header {
