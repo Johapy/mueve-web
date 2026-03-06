@@ -126,7 +126,7 @@
                         </div>
 
                         <div id="totalRow" style="margin-top:6px;">
-                            <span id="step2TotalLabel">Total a enviar (Bs):</span>
+                            <span id="step2TotalLabel" style="margin-top:6px; text-align:center; padding: 10px; background-color: var(--surface-color); border-radius: 4px;">Total a enviar (Bs):</span>
                             <strong id="step2TotalBs" style="margin-left:6px; padding: 5px;">0.00 Bs</strong>
                         </div>
 
