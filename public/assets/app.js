@@ -319,6 +319,8 @@ function calculateAndDisplay(){
     const netUsdEl = document.getElementById('netUsd');
     const totalBsEl = document.getElementById('totalBs');
     const amountBsInput = document.getElementById('amountBs');
+    const step2TotalLabel = document.getElementById('step2TotalLabel');
+    const step2TotalBs = document.getElementById('step2TotalBs');
 
     if(type === 'Vender'){
         const net_usd = round2(A - commission_usd);
@@ -333,6 +335,8 @@ function calculateAndDisplay(){
         const netRow = document.getElementById('netUsdRow'); if(netRow) netRow.style.display = 'block';
         const commissionBsRow = document.getElementById('commissionBsRow'); if(commissionBsRow) commissionBsRow.style.display = 'block';
         const totalLabel = document.getElementById('totalLabel'); if(totalLabel) totalLabel.textContent = 'Recibirás (Bs):';
+        if(step2TotalLabel) step2TotalLabel.textContent = 'Recibirás (USD):';
+        if(step2TotalBs) step2TotalBs.textContent = formatUsd(A);
     } else {
         const gross_usd = round2(A + commission_usd);
         const pay_bs = round2(gross_usd * r);
@@ -347,6 +351,8 @@ function calculateAndDisplay(){
         const netRow = document.getElementById('netUsdRow'); if(netRow) netRow.style.display = 'none';
         const commissionBsRow = document.getElementById('commissionBsRow'); if(commissionBsRow) commissionBsRow.style.display = 'block';
         const totalLabel = document.getElementById('totalLabel'); if(totalLabel) totalLabel.textContent = 'Total a enviar (Bs):';
+        if(step2TotalLabel) step2TotalLabel.textContent = 'Total a enviar (Bs):';
+        if(step2TotalBs) step2TotalBs.textContent = formatBs(pay_bs);
     }
 }
 
