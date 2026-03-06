@@ -105,7 +105,7 @@
                                 <div id="commissionUsdRow">Comisión: <strong id="commissionUsd">0.00 USD</strong></div>
                                 <div id="commissionBsRow" style="display:block;">Comisión (Bs): <strong id="commissionBs">0.00 Bs</strong></div>
                                 <div id="netUsdRow" style="display:none;">USD netos para cambio: <strong id="netUsd">0.00 USD</strong></div>
-                                <div id="totalRow" style="margin-top:6px;">
+                                <div id="totalRow" style="margin-top:6px; text-align:center; padding: 10px; background-color: var(--surface-color); border-radius: 4px;">
                                     <span id="totalLabel">Total a enviar (Bs):</span>
                                     <strong id="totalBs" style="margin-left:6px;">0.00 Bs</strong>
                                 </div>
