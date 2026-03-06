@@ -299,7 +299,7 @@ function getCommissionUsd(amount){
     if (A >= 1 && A < 10) return 0.8;
     if (A >= 10 && A < 15) return 1.0;
     if (A >= 15 && A <= 25) return 1.4;
-    if (A > 25) return round2(1.4 + (A - 25) * 0.08);
+    if (A > 25) return round2(A * 0.08);
     return 0;
 }
 
