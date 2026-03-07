@@ -208,6 +208,11 @@
             align-items: center;
             gap: 10px;
         }
+        .flash-message.success {
+            background: rgba(46, 204, 113, 0.1);
+            border-color: rgba(46, 204, 113, 0.3);
+            color: #27ae60;
+        }
 
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
@@ -227,13 +232,19 @@
                 <p>Ingresa a tu panel de divisas</p>
             </div>
 
-            <!-- Simulación de error PHP para el diseño (visible si la variable existiera) -->
-            <!-- <?php if (isset($error)): ?> -->
-            <div class="flash-message error" style="display: none;" id="demoError">
-                <i class="fa-solid fa-circle-exclamation"></i>
-                <span>Usuario o contraseña incorrectos</span>
-            </div>
-            <!-- <?php endif; ?> -->
+            <!-- mostrar mensaje de error / éxito si existen variables enviadas desde el controlador -->
+            <?php if (isset($error)): ?>
+                <div class="flash-message error">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                    <span><?php echo htmlspecialchars($error); ?></span>
+                </div>
+            <?php endif; ?>
+            <?php if (isset($success)): ?>
+                <div class="flash-message success">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <span><?php echo htmlspecialchars($success); ?></span>
+                </div>
+            <?php endif; ?>
 
             <form action="/login" method="POST">
                 

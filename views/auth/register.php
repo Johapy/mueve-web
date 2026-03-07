@@ -227,13 +227,19 @@
                 <p>Ingresa a tu panel de divisas</p>
             </div>
 
-            <!-- Simulación de error PHP para el diseño (visible si la variable existiera) -->
-            <!-- <?php if (isset($error)): ?> -->
-            <div class="flash-message error" style="display: none;" id="demoError">
-                <i class="fa-solid fa-circle-exclamation"></i>
-                <span>Usuario o contraseña incorrectos</span>
-            </div>
-            <!-- <?php endif; ?> -->
+            <!-- mostrar mensaje si $error existe -->
+            <?php if (isset($error)): ?>
+                <div class="flash-message error">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                    <span><?php echo htmlspecialchars($error); ?></span>
+                </div>
+            <?php endif; ?>
+            <?php if (isset($success)): ?>
+                <div class="flash-message success">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <span><?php echo htmlspecialchars($success); ?></span>
+                </div>
+            <?php endif; ?>
 
             <form action="/register" method="POST">
 

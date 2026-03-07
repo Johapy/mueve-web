@@ -5,13 +5,31 @@ class AuthController extends Controller
 
     public function loginForm()
     {
-        // Carga la vista de login (la crearemos en el siguiente paso)
-        $this->view('auth/login', ['title' => 'Iniciar Sesión']);
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        $data = ['title' => 'Iniciar Sesión'];
+
+        // si hay mensajes flash en sesión, pasarlos y eliminarlos
+        if (!empty($_SESSION['flash_success'])) {
+            $data['success'] = $_SESSION['flash_success'];
+            unset($_SESSION['flash_success']);
+        }
+        if (!empty($_SESSION['flash_error'])) {
+            $data['error'] = $_SESSION['flash_error'];
+            unset($_SESSION['flash_error']);
+        }
+
+        $this->view('auth/login', $data);
     }
 
     public function registerForm()
     {
-        $this->view('auth/register', ['title' => 'Registro']);
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        $data = ['title' => 'Registro'];
+        if (!empty($_SESSION['flash_error'])) {
+            $data['error'] = $_SESSION['flash_error'];
+            unset($_SESSION['flash_error']);
+        }
+        $this->view('auth/register', $data);
     }
 
     public function logout(){
@@ -134,7 +152,9 @@ class AuthController extends Controller
         $responseData = json_decode($response, true);
 
         if ($httpCode === 201) {
-            // Registro exitoso, redirigimos al login
+            // Registro exitoso, utilizamos flash y redirigimos al login
+            if (session_status() === PHP_SESSION_NONE) session_start();
+            $_SESSION['flash_success'] = 'Usuario creado correctamente. Inicia sesión para continuar.';
             header('Location: /login');
             exit;
         } else {
