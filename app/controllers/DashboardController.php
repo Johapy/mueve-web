@@ -46,10 +46,6 @@ class DashboardController extends Controller {
 
         // Si el usuario no tiene métodos de pago guardados lo llevamos a la página
         // de configuración para que cree uno (no debería poder iniciar transacciones).
-        if (empty($paymentMethods)) {
-            header('Location: /payment-methods');
-            exit;
-        }
 
         // Pasamos los métodos a la vista para que el HTML los renderice sin fetch client-side
         $data['payment_methods'] = $paymentMethods;

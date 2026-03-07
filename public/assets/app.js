@@ -33,6 +33,16 @@ function goToStep(stepNumber) {
             alert("Por favor ingresa un monto válido");
             return;
         }
+        // comprobar que existe un método de pago seleccionado
+        const bankSelect = document.getElementById('bankSelect');
+        if (bankSelect) {
+            const val = bankSelect.value;
+            // valor vacío indica "No hay métodos guardados" o selección inválida
+            if (!val) {
+                alert("Necesitas crear o seleccionar un método de pago antes de continuar.");
+                return;
+            }
+        }
     }
 
     // Ocultar todos, mostrar el deseado
