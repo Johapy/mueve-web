@@ -195,6 +195,44 @@ selectedcontent .icon {
   display: none; 
 }
 
+/* Notificaciones tipo toast */
+#notification-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.notification {
+    min-width: 250px;
+    max-width: 90vw;
+    padding: 12px 16px;
+    border-radius: 8px;
+    color: var(--text-color);
+    background: var(--surface-color);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    opacity: 0;
+    transform: translateY(-10px);
+    animation: slideIn 0.3s forwards;
+}
+
+.notification.success { border-left: 4px solid var(--success-color); }
+.notification.error { border-left: 4px solid var(--danger-color); }
+
+@keyframes slideIn {
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideOut {
+    to { opacity: 0; transform: translateY(-10px); }
+}
+
 /* Clases de utilidad */
 .card {
     background-color: var(--surface-color);

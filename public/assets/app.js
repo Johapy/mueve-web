@@ -30,7 +30,7 @@ function goToStep(stepNumber) {
     // Validar paso 1 antes de avanzar
     if (stepNumber === 2) {
         if (!amountUsdInput.value || amountUsdInput.value <= 0) {
-            alert("Por favor ingresa un monto válido");
+            showNotification('error', "Por favor ingresa un monto válido");
             return;
         }
         // comprobar que existe un método de pago seleccionado
@@ -39,7 +39,7 @@ function goToStep(stepNumber) {
             const val = bankSelect.value;
             // valor vacío indica "No hay métodos guardados" o selección inválida
             if (!val) {
-                alert("Necesitas crear o seleccionar un método de pago antes de continuar.");
+                showNotification('error', "Necesitas crear o seleccionar un método de pago antes de continuar.");
                 return;
             }
         }
@@ -79,17 +79,17 @@ async function submitTransaction(e) {
         const result = await response.json();
 
         if (response.ok) {
-            alert("¡Transacción Exitosa! ID: " + result.transaction.id);
+            showNotification('success', "¡Transacción Exitosa! ID: " + result.transaction.id);
             // Reiniciar formulario o redirigir a historial
             window.location.reload();
         } else {
-            alert("Error: " + (result.message || "Algo salió mal"));
+            showNotification('error', "Error: " + (result.message || "Algo salió mal"));
             conloge.log("errorrrrr: " + result.message)
         }
 
     } catch (error) {
         console.error(error);
-        alert("Error de conexión");
+        showNotification('error', "Error de conexión");
     }
 }
 
@@ -296,6 +296,20 @@ document.addEventListener('DOMContentLoaded', function(){
 // Cálculo de comisiones avanzado (por tramos)
 // -----------------------------
 function round2(n){ return Math.round(n * 100) / 100; }
+
+// simple toast-like notification helper
+function showNotification(type, message, duration = 3000) {
+    const container = document.getElementById('notification-container');
+    if (!container) return;
+    const notif = document.createElement('div');
+    notif.className = 'notification ' + type;
+    notif.textContent = message;
+    container.appendChild(notif);
+    setTimeout(() => {
+        notif.style.animation = 'slideOut 0.3s forwards';
+        notif.addEventListener('animationend', () => notif.remove());
+    }, duration);
+}
 function formatBs(n){ return new Intl.NumberFormat('es-VE').format(round2(n).toFixed(2)); }
 function formatUsd(n){ return round2(n).toFixed(2) + ' USD'; }
 

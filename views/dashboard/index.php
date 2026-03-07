@@ -12,6 +12,7 @@
 
 <body>
 
+    <div id="notification-container"></div>
     <div class="dashboard-container">
 
         <?php require_once __DIR__ . '/components/sidebar.php'; ?>
