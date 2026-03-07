@@ -96,6 +96,13 @@
                             </select>
                         </div>
 
+                        <?php if (empty($initialList)): ?>
+                            <div class="flash-message" style="border-color: var(--danger-color); text-align:center; margin:10px 0;">
+                                <strong>No hay métodos de pago disponibles para la plataforma seleccionada.</strong><br>
+                                <a href="/payment-methods" class="btn-secondary" style="margin-top:8px;">Crear método de pago</a>
+                            </div>
+                        <?php endif; ?>
+
                         <div class="form-group">
                             <label>Recibes / Pagas en Bolívares (Bs)</label>
                             <input type="text" id="amountBs" placeholder="0.00" readonly style="background-color: var(--surface-color); cursor: not-allowed;">
@@ -112,7 +119,7 @@
                             </div>
                         </div>
 
-                        <button type="button" class="btn-primary btn-block" onclick="goToStep(2)">
+                        <button type="button" class="btn-primary btn-block" onclick="goToStep(2)" <?php if(empty($initialList)) echo 'disabled'; ?> >
                             Continuar <i class="fa-solid fa-arrow-right"></i>
                         </button>
                     </div>
