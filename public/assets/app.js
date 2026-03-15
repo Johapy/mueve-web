@@ -57,6 +57,14 @@ function goToStep(stepNumber) {
 async function submitTransaction(e) {
     e.preventDefault();
 
+    // Protección del botón: deshabilitar mientras se procesa
+    const submitBtn = document.getElementById('submitBtn');
+    const originalText = submitBtn ? submitBtn.innerHTML : '';
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Procesando...';
+    }
+
     // Recolectar datos
     const formData = new FormData(e.target);
     const data = Object.fromEntries(formData.entries());
@@ -84,12 +92,18 @@ async function submitTransaction(e) {
             window.location.reload();
         } else {
             showNotification('error', "Error: " + (result.message || "Algo salió mal"));
-            conloge.log("errorrrrr: " + result.message)
+            console.log("errorrrrr: " + result.message);
         }
 
     } catch (error) {
         console.error(error);
         showNotification('error', "Error de conexión");
+    } finally {
+        // Re-habilitar botón siempre que no se haya redirigido
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+        }
     }
 }
 

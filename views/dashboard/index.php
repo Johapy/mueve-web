@@ -140,7 +140,7 @@
 
                         <div style="display: flex; gap: 10px;">
                             <button type="button" class="btn-primary" style="background: transparent; border: 1px solid var(--border-color);" onclick="goToStep(1)">Atrás</button>
-                            <button type="submit" class="btn-primary btn-block">Finalizar Operación</button>
+                            <button type="submit" id="submitBtn" class="btn-primary btn-block">Finalizar Operación</button>
                         </div>
                     </div>
 
