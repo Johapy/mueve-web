@@ -242,6 +242,7 @@
             <?php endif; ?>
 
             <form action="/register" method="POST">
+                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token ?? ''); ?>">
 
                 <div class="form-group">
                     <label for="name">Nombre</label>

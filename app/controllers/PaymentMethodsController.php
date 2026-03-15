@@ -5,10 +5,7 @@ class PaymentMethodsController extends Controller {
 
     // Mostrar la página de métodos de pago y listado
     public function index() {
-        if (!isset($_SESSION['token'])) {
-            header('Location: /login');
-            exit;
-        }
+        $this->requireAuth();
 
         $userMail = $_SESSION['email'] ?? '';
         $userName = $_SESSION['name'] ?? '';
@@ -37,7 +34,8 @@ class PaymentMethodsController extends Controller {
             'icon' => ICON_PATH,
             'userMail' => $userMail,
             'userName' => $userName,
-            'payment_methods' => $methods
+            'payment_methods' => $methods,
+            'csrf_token' => $this->generateCsrfToken()
         ];
 
         $this->view('payment-methods/index', $data);
@@ -45,13 +43,17 @@ class PaymentMethodsController extends Controller {
 
     // Manejar creación de nuevo método de pago (form POST)
     public function add() {
-        if (!isset($_SESSION['token'])) {
-            header('Location: /login');
-            exit;
-        }
+        $this->requireAuth();
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             header('Location: /payment-methods');
+            exit;
+        }
+
+        // Validar CSRF
+        $csrfToken = $_POST['csrf_token'] ?? '';
+        if (!$this->validateCsrfToken($csrfToken)) {
+            header('Location: /payment-methods?error=csrf');
             exit;
         }
 

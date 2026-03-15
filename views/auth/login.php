@@ -247,6 +247,7 @@
             <?php endif; ?>
 
             <form action="/login" method="POST">
+                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token ?? ''); ?>">
                 
                 <div class="form-group">
                     <label for="email">Correo Electrónico</label>

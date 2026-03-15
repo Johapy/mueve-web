@@ -154,6 +154,10 @@
     <script>
         // Inyectar métodos de pago obtenidos por PHP para que JS los use sin fetch (token permanece en servidor)
         window.PAYMENT_METHODS = <?php echo json_encode($payment_methods ?? []); ?>;
+        // Token CSRF para peticiones JS (transacciones)
+        window.CSRF_TOKEN = <?php echo json_encode($csrf_token ?? ''); ?>;
+        // Datos de pago de Mueve (antes hardcodeados en app.js)
+        window.MUEVE_PAYMENT_CONFIG = <?php echo json_encode($mueve_payment_config ?? []); ?>;
     </script>
 
 </body>

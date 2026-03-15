@@ -79,7 +79,8 @@ async function submitTransaction(e) {
         const response = await fetch('/api/transactions/create', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': window.CSRF_TOKEN || ''
             },
             body: JSON.stringify(data)
         });
@@ -219,10 +220,13 @@ document.addEventListener('DOMContentLoaded', function(){
 // -----------------------------
 function renderPaymentInfo(){
     const container = document.getElementById('paymentInfo');
-    const owner = 'Mueve';
-    const phone = '0424-3354141';
-    const bank = 'BNC - 0191';
-    const ci = '29.846.137';
+    // Leer datos de pago de Mueve desde la config inyectada por PHP
+    const cfg = window.MUEVE_PAYMENT_CONFIG || {};
+    const owner = cfg.owner || '';
+    const phone = cfg.phone || '';
+    const bank = cfg.bank || '';
+    const ci = cfg.ci || '';
+    const mueveEmail = cfg.email || '';
 
 
     if(!container) return;
@@ -249,7 +253,7 @@ function renderPaymentInfo(){
             const html = `
                 <div class="flash-message" style="border-color: var(--primary-color); text-align:left;">
                     <strong>Enviar a este correo:</strong><br>
-                    <div style="margin-top:8px; font-weight:700; color:var(--text-color);">yohanderjose2002@gmail.com</div>
+                    <div style="margin-top:8px; font-weight:700; color:var(--text-color);">${mueveEmail}</div>
                     <div style="color:var(--text-muted); margin-top:6px; font-size:13px;">Usa este correo en la plataforma de destino para completar la recepción.</div>
                 </div>
             `;

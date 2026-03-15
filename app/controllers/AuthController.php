@@ -6,7 +6,10 @@ class AuthController extends Controller
     public function loginForm()
     {
         if (session_status() === PHP_SESSION_NONE) session_start();
-        $data = ['title' => 'Iniciar Sesión'];
+        $data = [
+            'title' => 'Iniciar Sesión',
+            'csrf_token' => $this->generateCsrfToken()
+        ];
 
         // si hay mensajes flash en sesión, pasarlos y eliminarlos
         if (!empty($_SESSION['flash_success'])) {
@@ -24,7 +27,10 @@ class AuthController extends Controller
     public function registerForm()
     {
         if (session_status() === PHP_SESSION_NONE) session_start();
-        $data = ['title' => 'Registro'];
+        $data = [
+            'title' => 'Registro',
+            'csrf_token' => $this->generateCsrfToken()
+        ];
         if (!empty($_SESSION['flash_error'])) {
             $data['error'] = $_SESSION['flash_error'];
             unset($_SESSION['flash_error']);
@@ -53,13 +59,22 @@ class AuthController extends Controller
 
     public function login()
     {
-        // ... (Tu lógica GET anterior se mantiene igual) ...
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-            $this->view('auth/login', ['title' => 'Iniciar Sesión']);
+            $this->view('auth/login', ['title' => 'Iniciar Sesión', 'csrf_token' => $this->generateCsrfToken()]);
             return;
         }
 
-        // ... (Tu lógica cURL para obtener el token se mantiene igual) ...
+        // Validar CSRF
+        $csrfToken = $_POST['csrf_token'] ?? '';
+        if (!$this->validateCsrfToken($csrfToken)) {
+            $this->view('auth/login', [
+                'title' => 'Iniciar Sesión',
+                'error' => 'Solicitud inválida. Recarga la página e intenta de nuevo.',
+                'csrf_token' => $this->generateCsrfToken()
+            ]);
+            return;
+        }
+
         $email = $_POST['email'] ?? '';
         $password = $_POST['password'] ?? '';
         $data = json_encode(['email' => $email, 'password' => $password]);
@@ -107,8 +122,12 @@ class AuthController extends Controller
                     // Decodificamos el payload para sacar los datos
                     $payloadData = json_decode(base64_decode($payload), true);
                     $_SESSION['user_id'] = $payloadData['id'];
-                    $_SESSION['email'] = $payloadData['email']; // Opcional
+                    $_SESSION['email'] = $payloadData['email'];
                     $_SESSION['name'] = $payloadData['name'];
+                    // Guardar expiración del token para referencia
+                    if (isset($payloadData['exp'])) {
+                        $_SESSION['token_exp'] = $payloadData['exp'];
+                    }
 
                     header('Location: /dashboard');
                     exit;
@@ -128,11 +147,21 @@ class AuthController extends Controller
 
     public function register()
     {
-        // Lógica para registrar un usuario (similar a login)
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-            $this->view('auth/register', ['title' => 'Registro']);
+            $this->view('auth/register', ['title' => 'Registro', 'csrf_token' => $this->generateCsrfToken()]);
             return;
-        }   
+        }
+
+        // Validar CSRF
+        $csrfToken = $_POST['csrf_token'] ?? '';
+        if (!$this->validateCsrfToken($csrfToken)) {
+            $this->view('auth/register', [
+                'title' => 'Registro',
+                'error' => 'Solicitud inválida. Recarga la página e intenta de nuevo.',
+                'csrf_token' => $this->generateCsrfToken()
+            ]);
+            return;
+        }
 
         $name = $_POST['name'] ?? '';
         $email = $_POST['email'] ?? '';

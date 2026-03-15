@@ -4,26 +4,22 @@ require_once __DIR__ . '/../core/Controller.php';
 class DashboardController extends Controller {
 
     public function index() {
-        // 1. Protección de Ruta
-        if (!isset($_SESSION['token'])) {
-            header('Location: /login');
-            exit;
-        }
+        // 1. Protección de Ruta (verifica token + expiración)
+        $this->requireAuth();
 
         // 2. Datos para la vista
-        $userMail = $_SESSION['email']; // Recuperamos datos guardados en login
-        $userName = $_SESSION['name']; // Recuperamos datos guardados en login
+        $userMail = $_SESSION['email'];
+        $userName = $_SESSION['name'];
 
         $data = [
             'title' => APP_NAME . ' | Dashboard',
             'icon' => ICON_PATH,
             'userMail' => $userMail,
-            'userName' => $userName
+            'userName' => $userName,
+            'csrf_token' => $this->generateCsrfToken()
         ];
 
         // SERVER-SIDE: obtener métodos de pago del API usando el token almacenado en la sesión.
-        // Hacemos esto en PHP para evitar exponer el token en el cliente y para no requerir
-        // que JS haga fetch con autorización.
         $paymentMethods = [];
         if (!empty($_SESSION['token'])) {
             $ch = curl_init(API_URL . '/payments-methods');
@@ -39,15 +35,10 @@ class DashboardController extends Controller {
 
             if ($httpCode === 200) {
                 $json = json_decode($response, true);
-                // Esperamos un array de métodos, assignar o fallback a array vacío
                 $paymentMethods = is_array($json) ? $json : [];
             }
         }
 
-        // Si el usuario no tiene métodos de pago guardados lo llevamos a la página
-        // de configuración para que cree uno (no debería poder iniciar transacciones).
-
-        // Pasamos los métodos a la vista para que el HTML los renderice sin fetch client-side
         $data['payment_methods'] = $paymentMethods;
 
         // Obtener tasa actual desde la API (endpoint público)
@@ -67,25 +58,26 @@ class DashboardController extends Controller {
 
         $data['current_rate'] = $currentRate ?: ($data['current_rate'] ?? 0);
 
+        // Datos de pago de Mueve (antes hardcodeados en app.js)
+        $data['mueve_payment_config'] = [
+            'owner' => 'Mueve',
+            'phone' => '0424-3354141',
+            'bank' => 'BNC - 0191',
+            'ci' => '29.846.137',
+            'email' => 'yohanderjose2002@gmail.com'
+        ];
+
         $this->view('dashboard/index', $data);
     }
-
-    // ... dentro de DashboardController ...
 
     public function history() {
         if (session_status() === PHP_SESSION_NONE) session_start();
 
-        // 1. Protección
-        if (!isset($_SESSION['token'])) {
-            header('Location: /login');
-            exit;
-        }
+        // Protección con verificación de expiración
+        $this->requireAuth();
 
-        // 2. Obtener TODAS las transacciones
-        // (Aquí podrías agregar lógica de paginación en el futuro)
         $transactions = $this->fetchTransactions($_SESSION['token']);
 
-        // 3. Renderizar vista de historial
         $data = [
             'title' => 'Historial | Mueve',
             'icon' => ICON_PATH,
@@ -99,17 +91,10 @@ class DashboardController extends Controller {
     public function payment_methods() {
         if (session_status() === PHP_SESSION_NONE) session_start();
 
-        // 1. Protección
-        if (!isset($_SESSION['token'])) {
-            header('Location: /login');
-            exit;
-        }
+        $this->requireAuth();
 
-        // 2. Obtener TODAS las transacciones
-        // (Aquí podrías agregar lógica de paginación en el futuro)
         $transactions = $this->fetchTransactions($_SESSION['token']);
 
-        // 3. Renderizar vista de historial
         $data = [
             'title' => 'Métodos de Pago | Mueve',
             'icon' => ICON_PATH,
@@ -121,7 +106,7 @@ class DashboardController extends Controller {
     }
 
     private function fetchTransactions($token) {
-        $ch = curl_init(API_URL . '/transactions'); // Asumiendo GET
+        $ch = curl_init(API_URL . '/transactions');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
             "Authorization: Bearer $token",
@@ -134,11 +119,10 @@ class DashboardController extends Controller {
 
         if ($httpCode === 200) {
             $json = json_decode($response, true);
-            // Si la API devuelve { transactions: [...] } o directo [...]
             return $json['transactions'] ?? $json ?? []; 
         }
 
-        return []; // Si falla, devolvemos array vacío para no romper la vista
+        return [];
     }
 }
 ?>

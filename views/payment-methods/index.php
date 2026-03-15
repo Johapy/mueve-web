@@ -34,6 +34,7 @@
                 <div>
                     <h3>Agregar Método</h3>
                     <form method="post" action="/payment-methods/add" id="addPaymentForm">
+                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token ?? ''); ?>">
                         <div class="form-group">
                             <label>Tipo</label>
                             <select name="type" id="pmType" required>
