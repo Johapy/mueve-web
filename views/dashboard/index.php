@@ -28,10 +28,10 @@
             <div class="p-6 md:p-8 relative z-10">
                 <!-- Tabs -->
                 <div class="flex p-1.5 bg-surface-container rounded-full mb-10 border border-outline-variant max-w-sm">
-                    <button onclick="setTransactionType('Comprar')" id="tab-comprar" class="flex-1 py-3 px-6 rounded-full font-headline font-bold text-sm transition-all duration-300 active-tab bg-primary text-on-primary-container shadow-lg">
+                    <button type="button" onclick="setTransactionType('Comprar')" id="tab-comprar" class="flex-1 py-3 px-6 rounded-full font-headline font-bold text-sm transition-all duration-300 active-tab">
                         Comprar USD
                     </button>
-                    <button onclick="setTransactionType('Vender')" id="tab-vender" class="flex-1 py-3 px-6 rounded-full font-headline font-bold text-sm transition-all duration-300 text-on-surface-variant hover:text-on-surface">
+                    <button type="button" onclick="setTransactionType('Vender')" id="tab-vender" class="flex-1 py-3 px-6 rounded-full font-headline font-bold text-sm transition-all duration-300 text-on-surface-variant hover:text-on-surface">
                         Vender USD
                     </button>
                 </div>

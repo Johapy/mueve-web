@@ -97,6 +97,32 @@
         .btn-gradient {
             background: linear-gradient(135deg, #ADC7FF 0%, #4A8EFF 100%);
         }
+        .active-tab {
+            background-color: #4A8EFF !important;
+            color: #001a41 !important;
+            box-shadow: 0 10px 25px -5px rgba(74, 142, 255, 0.4);
+        }
+        .notification {
+            padding: 1rem 1.5rem;
+            border-radius: 1rem;
+            background: rgba(50, 53, 56, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            animation: slideIn 0.3s ease-out;
+            max-width: 320px;
+        }
+        .notification.error { border-color: #ffb4ab; color: #ffb4ab; }
+        .notification.success { border-color: #adc7ff; color: #adc7ff; }
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
     </style>
 </head>
 <body class="bg-surface text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container">

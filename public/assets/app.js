@@ -8,24 +8,24 @@ function setTransactionType(type) {
     if (!inputType) return;
     inputType.value = type;
 
-    // Actualizar estilos de pestañas (Buscando los IDs específicos del nuevo diseño)
+    // Actualizar estilos de pestañas
     const btnComprar = document.getElementById('tab-comprar');
     const btnVender = document.getElementById('tab-vender');
     
     if (btnComprar && btnVender) {
         if (type === 'Comprar') {
-            btnComprar.className = "flex-1 py-3 px-6 rounded-full font-headline font-bold text-sm transition-all duration-300 bg-primary text-on-primary-container shadow-lg";
-            btnVender.className = "flex-1 py-3 px-6 rounded-full font-headline font-bold text-sm transition-all duration-300 text-on-surface-variant hover:text-on-surface";
+            btnComprar.classList.add('active-tab');
+            btnVender.classList.remove('active-tab');
         } else {
-            btnVender.className = "flex-1 py-3 px-6 rounded-full font-headline font-bold text-sm transition-all duration-300 bg-primary text-on-primary-container shadow-lg";
-            btnComprar.className = "flex-1 py-3 px-6 rounded-full font-headline font-bold text-sm transition-all duration-300 text-on-surface-variant hover:text-on-surface";
+            btnVender.classList.add('active-tab');
+            btnComprar.classList.remove('active-tab');
         }
     }
 
     // Repoblar selector de métodos para reflejar el nuevo tipo (Comprar/Vender)
-    if(typeof populateBankSelectFromInjectedData === 'function') populateBankSelectFromInjectedData();
+    populateBankSelectFromInjectedData();
     // Recalcular montos y labels
-    if(typeof calculateAndDisplay === 'function') calculateAndDisplay();
+    calculateAndDisplay();
 }
 
 // 2. Cálculo Automático (delegado a calculateAndDisplay)
@@ -44,33 +44,31 @@ function goToStep(stepNumber) {
     
     // Validar paso 1 antes de avanzar
     if (stepNumber === 2) {
-        if (!amountUsdInput.value || amountUsdInput.value <= 0) {
-            showNotification('error', "Por favor ingresa un monto válido");
+        if (!amountUsdInput.value || parseFloat(amountUsdInput.value) <= 0) {
+            showNotification('error', "Introduce un monto válido");
             return;
         }
-        // comprobar que existe un método de pago seleccionado
+        
         const bankSelect = document.getElementById('bankSelect');
-        if (bankSelect) {
-            const val = bankSelect.value;
-            if (!val || val === "") {
-                showNotification('error', "Necesitas seleccionar o crear un método de pago antes de continuar.");
-                return;
-            }
+        const bankVal = bankSelect ? bankSelect.value : '';
+        if (!bankVal || bankVal === "") {
+            showNotification('error', "Selecciona un método de pago.");
+            return;
         }
     }
 
-    // Navegación de pasos (usando clases de Tailwind 'hidden')
+    // Cambiar visibilidad de pasos
     const s1 = document.getElementById('step1');
     const s2 = document.getElementById('step2');
     
-    if (stepNumber === 1) {
-        if (s1) s1.classList.remove('hidden');
-        if (s2) s2.classList.add('hidden');
-    } else {
+    if (stepNumber === 2) {
         if (s1) s1.classList.add('hidden');
         if (s2) s2.classList.remove('hidden');
-        // Si entramos al paso 2, renderizar la información de pago dinámica
-        if(typeof renderPaymentInfo === 'function') renderPaymentInfo();
+        renderPaymentInfo();
+        window.scrollTo({top: 0, behavior: 'smooth'});
+    } else {
+        if (s1) s1.classList.remove('hidden');
+        if (s2) s2.classList.add('hidden');
     }
 }
 
