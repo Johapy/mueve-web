@@ -1,151 +1,157 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $title; ?></title>
-    <link rel="icon" type="image/x-icon" href="<?php echo $icon; ?>">
-    <link rel="stylesheet" href="/assets/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body>
+<?php $title = "Métodos de Pago | Mueve"; ?>
+<?php require_once __DIR__ . '/../layouts/header.php'; ?>
 
-<div class="dashboard-container">
+<div class="flex min-h-screen">
+    <!-- Sidebar -->
     <?php require_once __DIR__ . '/../dashboard/components/sidebar.php'; ?>
 
-    <main class="main-content">
-
-        <div class="content-header">
-            <div>
-                <h2>Métodos de Pago</h2>
-                <p style="color: var(--text-muted); margin-top: 5px;">Agregar y administrar tus métodos de cobro</p>
-            </div>
+    <!-- Main Content -->
+    <main class="flex-1 md:ml-64 p-4 md:p-10 pt-24 md:pt-10">
+        
+        <!-- Header -->
+        <div class="mb-10">
+            <h1 class="text-3xl font-headline font-extrabold text-on-surface">Métodos de Pago</h1>
+            <p class="text-on-surface-variant mt-1">Administra tus cuentas de Zinli, Wally, USDT y Pago Móvil</p>
         </div>
 
-        <div class="card" style="margin-top: 16px;">
-            <?php if(isset($_GET['added'])): ?>
-                <div class="flash-message" style="border-color:var(--secondary-color); margin-bottom:12px;">Método agregado correctamente.</div>
-            <?php endif; ?>
-            <?php if(isset($_GET['error'])): ?>
-                <div class="flash-message" style="border-color:crimson; margin-bottom:12px;">Error al agregar el método.</div>
-            <?php endif; ?>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Add Method Form -->
+            <div class="glass-panel rounded-[2.5rem] border border-outline-variant p-8 shadow-2xl h-fit">
+                <h2 class="text-xl font-headline font-bold text-on-surface mb-6 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary">add_circle</span>
+                    Agregar Nuevo Método
+                </h2>
 
-            <div style="display:flex; flex-direction:column; gap:24px;">
-                <div>
-                    <h3>Agregar Método</h3>
-                    <form method="post" action="/payment-methods/add" id="addPaymentForm">
-                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token ?? ''); ?>">
-                        <div class="form-group">
-                            <label>Tipo</label>
-                            <select name="type" id="pmType" required>
-                                <option value="Zinli">Zinli</option>
-                                <option value="Wally">Wally</option>
-                                <option value="USDT">USDT</option>
-                                <option value="PagoMovil">PagoMovil</option>
-                            </select>
-                        </div>
+                <?php if(isset($_GET['added'])): ?>
+                    <div class="flex items-center gap-3 p-4 mb-6 rounded-2xl bg-primary/10 border border-primary/20 text-primary text-sm">
+                        <span class="material-symbols-outlined">check_circle</span>
+                        <span>Método agregado correctamente.</span>
+                    </div>
+                <?php endif; ?>
 
-                        <div class="form-group">
-                            <label>Nombre (owner_name)</label>
-                            <input type="text" name="owner_name" required>
-                        </div>
+                <?php if(isset($_GET['error'])): ?>
+                    <div class="flex items-center gap-3 p-4 mb-6 rounded-2xl bg-error/10 border border-error/20 text-error text-sm">
+                        <span class="material-symbols-outlined">error</span>
+                        <span>Error al agregar el método. Revisa los datos.</span>
+                    </div>
+                <?php endif; ?>
 
-                        <div id="mailRow" style="display:block;">
-                            <div class="form-group">
-                                <label>Email (mail_pay)</label>
-                                <input type="email" name="mail_pay" id="mailPayInput">
-                            </div>
-                        </div>
+                <form method="post" action="/payment-methods/add" id="addPaymentForm" class="space-y-6">
+                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token ?? ''); ?>">
+                    
+                    <div class="space-y-2">
+                        <label class="block text-sm font-label text-on-surface-variant ml-1">Tipo de Plataforma</label>
+                        <select name="type" id="pmType" required class="w-full bg-surface-container border border-outline-variant rounded-2xl py-3.5 px-4 text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all appearance-none cursor-pointer">
+                            <option value="Zinli">Zinli</option>
+                            <option value="Wally">Wally</option>
+                            <option value="USDT">USDT</option>
+                            <option value="PagoMovil">Pago Móvil</option>
+                        </select>
+                    </div>
 
-                        <div id="pagomovilRows" style="display:none;">
-                            <div class="form-group">
-                                <label>CI</label>
-                                <input type="text" name="ci">
-                            </div>
-                            <div class="form-group">
-                                <label>Banco</label>
-                                <input type="text" name="bank">
-                            </div>
-                            <div class="form-group">
-                                <label>Teléfono</label>
-                                <input type="text" name="phone">
-                            </div>
-                        </div>
+                    <div class="space-y-2">
+                        <label class="block text-sm font-label text-on-surface-variant ml-1">Nombre del Titular</label>
+                        <input type="text" name="owner_name" placeholder="Ej: Juan Pérez" required class="w-full bg-surface-container border border-outline-variant rounded-2xl py-3.5 px-4 text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all">
+                    </div>
 
-                        <div style="display:flex; gap:10px; margin-top:12px;">
-                            <button type="submit" class="btn btn-primary">Agregar</button>
+                    <div id="mailRow" class="space-y-2">
+                        <label class="block text-sm font-label text-on-surface-variant ml-1">Correo Electrónico (Pago)</label>
+                        <input type="email" name="mail_pay" id="mailPayInput" placeholder="correo@ejemplo.com" class="w-full bg-surface-container border border-outline-variant rounded-2xl py-3.5 px-4 text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all">
+                    </div>
+
+                    <div id="pagomovilRows" class="hidden space-y-4">
+                        <div class="space-y-2">
+                            <label class="block text-sm font-label text-on-surface-variant ml-1">Cédula de Identidad</label>
+                            <input type="text" name="ci" placeholder="V-12345678" class="w-full bg-surface-container border border-outline-variant rounded-2xl py-3.5 px-4 text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all">
                         </div>
-                    </form>
-                </div>
+                        <div class="space-y-2">
+                            <label class="block text-sm font-label text-on-surface-variant ml-1">Banco</label>
+                            <input type="text" name="bank" placeholder="Ej: Banesco" class="w-full bg-surface-container border border-outline-variant rounded-2xl py-3.5 px-4 text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="block text-sm font-label text-on-surface-variant ml-1">Teléfono</label>
+                            <input type="text" name="phone" placeholder="04121234567" class="w-full bg-surface-container border border-outline-variant rounded-2xl py-3.5 px-4 text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-gradient w-full py-4 rounded-full font-headline font-bold text-on-primary-container flex items-center justify-center gap-2 hover:opacity-90 transition-all active:scale-[0.98] shadow-lg shadow-primary/20">
+                        Guardar Método
+                        <span class="material-symbols-outlined">save</span>
+                    </button>
+                </form>
             </div>
-        </div>
 
-        <!-- Sección separada: listado de métodos debajo del formulario -->
-        <div style="margin-top:24px;">
-            <h3>Listado de Métodos</h3>
-            <div class="card" style="margin-top:12px; padding:14px;">
+            <!-- Methods List -->
+            <div class="space-y-6">
+                <h2 class="text-xl font-headline font-bold text-on-surface flex items-center gap-2 mb-2">
+                    <span class="material-symbols-outlined text-primary">list_alt</span>
+                    Tus Métodos Guardados
+                </h2>
+
                 <?php
-                    $methods = $payment_methods ?? [];
-                    if(empty($methods)){
-                        echo '<p class="text-muted">No hay métodos guardados aún.</p>';
-                    } else {
-                        // Agrupar por tipo
-                        $groups = [];
-                        foreach($methods as $m){
-                            $t = $m['type'] ?? 'Otros';
-                            $groups[$t][] = $m;
-                        }
-
-                        foreach($groups as $type => $items){
-                            echo "<h4 style=\"margin-top:12px;\">".htmlspecialchars($type)."</h4>";
-                            echo "<div style=\"display:flex;flex-direction:column;gap:8px; margin-top:8px;\">";
-                            foreach($items as $it){
-                                $owner = htmlspecialchars($it['owner_name'] ?? '');
-                                $typeSafe = htmlspecialchars($it['type'] ?? '');
-                                if(strtolower($type) === 'pagomovil'){
-                                    $ci = htmlspecialchars($it['ci'] ?? '');
-                                    $bank = htmlspecialchars($it['bank'] ?? '');
-                                    $phone = htmlspecialchars($it['phone'] ?? '');
-                                    $recipient = htmlspecialchars(trim(($phone ? $phone.' — ' : '') . ($bank ? $bank.' — ' : '') . $ci));
-                                } else {
-                                    $recipient = htmlspecialchars($it['mail_pay'] ?? '');
-                                }
-
-                                echo "<div class=\"card pm-list-item\" style=\"padding:12px; border-radius:14px; display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:10px;\">";
-                                echo "<div style=\"min-width:0;\">";
-                                echo "<div style=\"font-weight:700; font-size:15px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;\">$owner</div>";
-                                echo "<div style=\"color:var(--text-muted); font-size:13px; margin-top:6px;\">$typeSafe</div>";
-                                echo "</div>";
-                                echo "<div style=\"text-align:right; min-width:160px; max-width:260px;\">";
-                                echo "<div style=\"font-weight:600; color:var(--primary-color); font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;\">$recipient</div>";
-                                echo "</div>";
-                                echo "</div>";
-                            }
-                            echo "</div>";
-                        }
+                $methods = $payment_methods ?? [];
+                if(empty($methods)): ?>
+                    <div class="glass-panel rounded-3xl p-8 border border-outline-variant text-center opacity-60">
+                        <span class="material-symbols-outlined text-5xl text-on-surface-variant mb-4">account_balance_wallet</span>
+                        <p class="text-on-surface-variant">Aún no has agregado métodos de pago.</p>
+                    </div>
+                <?php else:
+                    $groups = [];
+                    foreach($methods as $m){
+                        $t = $m['type'] ?? 'Otros';
+                        $groups[$t][] = $m;
                     }
-                ?>
+
+                    foreach($groups as $type => $items): ?>
+                        <div class="space-y-3">
+                            <h3 class="text-xs font-label uppercase tracking-widest text-primary ml-2"><?php echo htmlspecialchars($type); ?></h3>
+                            <div class="space-y-3">
+                                <?php foreach($items as $it): 
+                                    $owner = htmlspecialchars($it['owner_name'] ?? '');
+                                    $typeSafe = htmlspecialchars($it['type'] ?? '');
+                                    if(strtolower($type) === 'pagomovil'){
+                                        $ci = htmlspecialchars($it['ci'] ?? '');
+                                        $bank = htmlspecialchars($it['bank'] ?? '');
+                                        $phone = htmlspecialchars($it['phone'] ?? '');
+                                        $recipient = htmlspecialchars(trim(($phone ? $phone : '') . ($bank ? ' — ' . $bank : '') . ($ci ? ' — ' . $ci : '')));
+                                    } else {
+                                        $recipient = htmlspecialchars($it['mail_pay'] ?? '');
+                                    }
+                                ?>
+                                <div class="glass-panel rounded-2xl p-4 border border-outline-variant flex justify-between items-center group hover:border-primary/30 transition-all">
+                                    <div class="min-w-0">
+                                        <p class="font-bold text-on-surface truncate"><?php echo $owner; ?></p>
+                                        <p class="text-xs text-on-surface-variant mt-1"><?php echo $recipient; ?></p>
+                                    </div>
+                                    <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-all">
+                                        <!-- Opciones futuras como editar/borrar -->
+                                        <span class="material-symbols-outlined text-on-surface-variant hover:text-error cursor-pointer transition-colors p-2 rounded-full hover:bg-error/10">delete</span>
+                                    </div>
+                                </div>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    <?php endforeach;
+                endif; ?>
             </div>
-        </div>
         </div>
 
     </main>
 </div>
 
 <script>
-    // Toggle fields según tipo seleccionado
     const pmType = document.getElementById('pmType');
     const mailRow = document.getElementById('mailRow');
     const pagomovilRows = document.getElementById('pagomovilRows');
 
     function togglePmFields(){
         const v = pmType.value;
-        if(v === 'PagoMovil'){
-            mailRow.style.display = 'none';
-            pagomovilRows.style.display = 'block';
+        if(v === 'PagoMovil' || v === 'Pago Móvil'){
+            mailRow.classList.add('hidden');
+            pagomovilRows.classList.remove('hidden');
         } else {
-            mailRow.style.display = 'block';
-            pagomovilRows.style.display = 'none';
+            mailRow.classList.remove('hidden');
+            pagomovilRows.classList.add('hidden');
         }
     }
 
@@ -153,5 +159,4 @@
     document.addEventListener('DOMContentLoaded', togglePmFields);
 </script>
 
-</body>
-</html>
+<?php require_once __DIR__ . '/../layouts/footer.php'; ?>

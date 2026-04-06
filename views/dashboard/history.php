@@ -1,119 +1,111 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $data['title']; ?></title>
-    <link rel="icon" type="image/x-icon" href="<?php echo $icon; ?>">
-    <link rel="stylesheet" href="/assets/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body>
+<?php $title = "Historial de Movimientos | Mueve"; ?>
+<?php require_once __DIR__ . '/../layouts/header.php'; ?>
 
-<div class="dashboard-container">
-    
+<div class="flex min-h-screen">
+    <!-- Sidebar -->
     <?php require_once __DIR__ . '/components/sidebar.php'; ?>
 
-    <main class="main-content">
+    <!-- Main Content -->
+    <main class="flex-1 md:ml-64 p-4 md:p-10 pt-24 md:pt-10">
         
-        <div class="content-header">
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
             <div>
-                <h2>Historial de Movimientos</h2>
-                <p style="color: var(--text-muted); margin-top: 5px;">Tus operaciones recientes</p>
+                <h1 class="text-3xl font-headline font-extrabold text-on-surface">Historial de Movimientos</h1>
+                <p class="text-on-surface-variant mt-1">Tus operaciones recientes y estados de transacción</p>
             </div>
             
-            <div style="position: relative; width: 300px; display: none; @media(min-width: 768px){display:block;}">
-                <i class="fa-solid fa-search" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
-                <input type="text" placeholder="Buscar referencia..." style="padding-left: 40px; background-color: var(--surface-color); border-radius: 50px;">
+            <div class="relative w-full md:w-72">
+                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+                <input type="text" placeholder="Buscar referencia..." class="w-full bg-surface-container border border-outline-variant rounded-full py-2.5 pl-12 pr-4 text-sm text-on-surface focus:outline-none focus:border-primary transition-all">
             </div>
         </div>
 
-        <?php if (empty($data['transactions'])): ?>
-            <div class="card" style="text-align: center; padding: 60px 20px;">
-                <div style="font-size: 48px; color: var(--text-muted); margin-bottom: 20px; opacity: 0.3;">
-                    <i class="fa-solid fa-folder-open"></i>
+        <?php if (empty($transactions)): ?>
+            <div class="glass-panel rounded-[2.5rem] border border-outline-variant p-20 text-center shadow-2xl">
+                <div class="w-20 h-20 bg-surface-container rounded-3xl flex items-center justify-center mx-auto mb-6 border border-outline-variant">
+                    <span class="material-symbols-outlined text-4xl text-on-surface-variant opacity-30">folder_open</span>
                 </div>
-                <h3 style="margin-bottom: 10px;">Aún no hay movimientos</h3>
-                <p style="color: var(--text-muted); margin-bottom: 30px;">Tus operaciones de cambio aparecerán aquí.</p>
-                <a href="/dashboard" class="btn-primary">Nueva Operación</a>
+                <h3 class="text-xl font-headline font-bold text-on-surface mb-2">Aún no hay movimientos</h3>
+                <p class="text-on-surface-variant mb-8 max-w-sm mx-auto">Tus operaciones de cambio aparecerán aquí una vez que realices tu primera transacción.</p>
+                <a href="/dashboard" class="btn-gradient px-8 py-3 rounded-full font-headline font-bold text-on-primary-container inline-flex items-center gap-2 hover:opacity-90 transition-all active:scale-95">
+                    <span class="material-symbols-outlined">add_circle</span>
+                    Nueva Operación
+                </a>
             </div>
 
         <?php else: ?>
-            <div class="table-responsive">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Tipo / ID</th>
-                            <th>Plataforma</th>
-                            <th>Monto USD</th>
-                            <th>Tasa</th>
-                            <th>Total Bs</th>
-                            <th>Estado</th>
-                            <th>Fecha/Ref</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($transactions as $t): ?>
-                            <tr>
-                                <td data-label="Tipo / ID">
-                                    <div style="display: flex; align-items: center; gap: 10px;">
-                                        <div style="
-                                            width: 32px; height: 32px; 
-                                            border-radius: 50%; 
-                                            display: flex; align-items: center; justify-content: center;
-                                            background-color: <?php echo ($t['transaction_type'] == 'Comprar') ? 'rgba(0, 204, 102, 0.1)' : 'rgba(255, 77, 77, 0.1)'; ?>;
-                                            color: <?php echo ($t['transaction_type'] == 'Comprar') ? 'var(--success-color)' : 'var(--danger-color)'; ?>;
-                                        ">
-                                            <i class="fa-solid <?php echo ($t['transaction_type'] == 'Comprar') ? 'fa-arrow-down' : 'fa-arrow-up'; ?>"></i>
-                                        </div>
-                                        <div>
-                                            <div style="font-weight: 600;"><?php echo htmlspecialchars($t['transaction_type']); ?></div>
-                                            <div style="font-size: 10px; color: var(--text-muted);">ID: #<?php echo $t['id']; ?></div>
-                                        </div>
-                                    </div>
-                                </td>
-                                
-                                <td data-label="Plataforma">
-                                    <span style="color: var(--text-color); font-weight: 500;">
-                                        <?php echo htmlspecialchars($t['type_pay']); ?>
-                                    </span>
-                                </td>
-                                
-                                <td data-label="Monto USD">
-                                    <div class="amount-usd">$<?php echo number_format($t['amount_usd'], 2); ?></div>
-                                </td>
-                                
-                                <td data-label="Tasa" style="color: var(--text-muted);">
-                                    <?php echo $t['rate_bs']; ?>
-                                </td>
-                                
-                                <td data-label="Total Bs">
-                                    <div class="amount-bs">Bs <?php echo number_format($t['total_bs'], 2); ?></div>
-                                </td>
-                                
-                                <td data-label="Estado">
-                                    <?php 
-                                        $statusClass = ($t['status'] === 'Completado') ? 'badge-success' : 'badge-pending';
-                                    ?>
-                                    <span class="badge <?php echo $statusClass; ?>">
-                                        <?php echo htmlspecialchars($t['status']); ?>
-                                    </span>
-                                </td>
-                                
-                                <td data-label="Fecha/Ref">
-                                    <div style="color: var(--text-muted); font-family: monospace;">
-                                        <?php echo htmlspecialchars($t['payment_reference']); ?>
-                                    </div>
-                                </td>
+            <div class="glass-panel rounded-[2rem] border border-outline-variant overflow-hidden shadow-2xl">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-surface-container-high border-b border-outline-variant">
+                                <th class="px-6 py-4 text-xs font-label uppercase tracking-widest text-on-surface-variant">Operación</th>
+                                <th class="px-6 py-4 text-xs font-label uppercase tracking-widest text-on-surface-variant">Plataforma</th>
+                                <th class="px-6 py-4 text-xs font-label uppercase tracking-widest text-on-surface-variant">Monto USD</th>
+                                <th class="px-6 py-4 text-xs font-label uppercase tracking-widest text-on-surface-variant">Tasa</th>
+                                <th class="px-6 py-4 text-xs font-label uppercase tracking-widest text-on-surface-variant text-right">Total Bs</th>
+                                <th class="px-6 py-4 text-xs font-label uppercase tracking-widest text-on-surface-variant">Estado</th>
+                                <th class="px-6 py-4 text-xs font-label uppercase tracking-widest text-on-surface-variant">Referencia</th>
                             </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody class="divide-y divide-outline-variant/30">
+                            <?php foreach ($transactions as $t): ?>
+                                <tr class="hover:bg-primary/5 transition-colors group">
+                                    <td class="px-6 py-6">
+                                        <div class="flex items-center gap-4">
+                                            <div class="w-10 h-10 rounded-xl flex items-center justify-center <?php echo ($t['transaction_type'] == 'Comprar') ? 'bg-primary/10 text-primary' : 'bg-tertiary/10 text-tertiary'; ?> group-hover:scale-110 transition-transform">
+                                                <span class="material-symbols-outlined text-xl"><?php echo ($t['transaction_type'] == 'Comprar') ? 'arrow_downward' : 'arrow_upward'; ?></span>
+                                            </div>
+                                            <div>
+                                                <p class="font-bold text-on-surface"><?php echo htmlspecialchars($t['transaction_type']); ?></p>
+                                                <p class="text-[10px] uppercase tracking-tighter text-on-surface-variant">ID: #<?php echo $t['id']; ?></p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    
+                                    <td class="px-6 py-6 font-medium text-on-surface">
+                                        <?php echo htmlspecialchars($t['type_pay']); ?>
+                                    </td>
+                                    
+                                    <td class="px-6 py-6">
+                                        <span class="text-on-surface font-black text-lg">$<?php echo number_format($t['amount_usd'], 2); ?></span>
+                                    </td>
+                                    
+                                    <td class="px-6 py-6 text-on-surface-variant text-sm">
+                                        <?php echo $t['rate_bs']; ?> <span class="text-[10px]">Bs/$</span>
+                                    </td>
+                                    
+                                    <td class="px-6 py-6 text-right">
+                                        <span class="text-primary font-black text-lg"><?php echo number_format($t['total_bs'], 2); ?> Bs</span>
+                                    </td>
+                                    
+                                    <td class="px-6 py-6">
+                                        <?php if ($t['status'] === 'Completado'): ?>
+                                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-widest border border-primary/20">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+                                                Completado
+                                            </span>
+                                        <?php else: ?>
+                                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-on-surface-variant/10 text-on-surface-variant text-[10px] font-bold uppercase tracking-widest border border-outline-variant">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-on-surface-variant"></span>
+                                                Pendiente
+                                            </span>
+                                        <?php endif; ?>
+                                    </td>
+                                    
+                                    <td class="px-6 py-6 text-on-surface-variant font-mono text-xs">
+                                        <?php echo htmlspecialchars($t['payment_reference']); ?>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         <?php endif; ?>
 
     </main>
 </div>
 
-</body>
-</html>
+<?php require_once __DIR__ . '/../layouts/footer.php'; ?>
