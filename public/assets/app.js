@@ -4,15 +4,28 @@ let currentRate = 0;
 // 1. Manejo de Pestañas (Comprar / Vender)
 function setTransactionType(type) {
     // Actualizar input oculto
-    document.getElementById('inputType').value = type;
+    const inputType = document.getElementById('inputType');
+    if (!inputType) return;
+    inputType.value = type;
 
-    // Actualizar estilos visuales
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.remove('active');
-        if (btn.dataset.type === type) btn.classList.add('active');
-    });
+    // Actualizar estilos de pestañas (Buscando los IDs específicos del nuevo diseño)
+    const btnComprar = document.getElementById('tab-comprar');
+    const btnVender = document.getElementById('tab-vender');
+    
+    if (btnComprar && btnVender) {
+        if (type === 'Comprar') {
+            btnComprar.className = "flex-1 py-3 px-6 rounded-full font-headline font-bold text-sm transition-all duration-300 bg-primary text-on-primary-container shadow-lg";
+            btnVender.className = "flex-1 py-3 px-6 rounded-full font-headline font-bold text-sm transition-all duration-300 text-on-surface-variant hover:text-on-surface";
+        } else {
+            btnVender.className = "flex-1 py-3 px-6 rounded-full font-headline font-bold text-sm transition-all duration-300 bg-primary text-on-primary-container shadow-lg";
+            btnComprar.className = "flex-1 py-3 px-6 rounded-full font-headline font-bold text-sm transition-all duration-300 text-on-surface-variant hover:text-on-surface";
+        }
+    }
 
-    // Opcional: Cambiar texto del botón o colores según sea compra/venta
+    // Repoblar selector de métodos para reflejar el nuevo tipo (Comprar/Vender)
+    if(typeof populateBankSelectFromInjectedData === 'function') populateBankSelectFromInjectedData();
+    // Recalcular montos y labels
+    if(typeof calculateAndDisplay === 'function') calculateAndDisplay();
 }
 
 // 2. Cálculo Automático (delegado a calculateAndDisplay)
@@ -27,6 +40,8 @@ if(amountUsdInput){
 
 // 3. Sistema de Pasos (Wizard)
 function goToStep(stepNumber) {
+    const amountUsdInput = document.getElementById('amountUsd');
+    
     // Validar paso 1 antes de avanzar
     if (stepNumber === 2) {
         if (!amountUsdInput.value || amountUsdInput.value <= 0) {
@@ -37,20 +52,26 @@ function goToStep(stepNumber) {
         const bankSelect = document.getElementById('bankSelect');
         if (bankSelect) {
             const val = bankSelect.value;
-            // valor vacío indica "No hay métodos guardados" o selección inválida
-            if (!val) {
-                showNotification('error', "Necesitas crear o seleccionar un método de pago antes de continuar.");
+            if (!val || val === "") {
+                showNotification('error', "Necesitas seleccionar o crear un método de pago antes de continuar.");
                 return;
             }
         }
     }
 
-    // Ocultar todos, mostrar el deseado
-    document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active-step'));
-    document.getElementById('step' + stepNumber).classList.add('active-step');
-
-    // Si entramos al paso 2, renderizar la información de pago dinámica
-    if(stepNumber === 2 && typeof renderPaymentInfo === 'function') renderPaymentInfo();
+    // Navegación de pasos (usando clases de Tailwind 'hidden')
+    const s1 = document.getElementById('step1');
+    const s2 = document.getElementById('step2');
+    
+    if (stepNumber === 1) {
+        if (s1) s1.classList.remove('hidden');
+        if (s2) s2.classList.add('hidden');
+    } else {
+        if (s1) s1.classList.add('hidden');
+        if (s2) s2.classList.remove('hidden');
+        // Si entramos al paso 2, renderizar la información de pago dinámica
+        if(typeof renderPaymentInfo === 'function') renderPaymentInfo();
+    }
 }
 
 // 4. Envío del Formulario (Submit)
@@ -220,7 +241,6 @@ document.addEventListener('DOMContentLoaded', function(){
 // -----------------------------
 function renderPaymentInfo(){
     const container = document.getElementById('paymentInfo');
-    // Leer datos de pago de Mueve desde la config inyectada por PHP
     const cfg = window.MUEVE_PAYMENT_CONFIG || {};
     const owner = cfg.owner || '';
     const phone = cfg.phone || '';
@@ -228,75 +248,70 @@ function renderPaymentInfo(){
     const ci = cfg.ci || '';
     const mueveEmail = cfg.email || '';
 
-
     if(!container) return;
 
     const typeInput = document.getElementById('inputType');
     const walletSelect = document.getElementById('walletSelect');
-    const bankSelect = document.getElementById('bankSelect');
-
     const transType = (typeInput && typeInput.value) ? typeInput.value : 'Comprar';
     const wallet = (walletSelect && walletSelect.value) ? walletSelect.value.toLowerCase() : '';
 
-    // Helper para leer hidden fields creados
-    function getHidden(name){
-        const el = document.querySelector('[name="'+name+'"]');
-        return el ? el.value : '';
-    }
-
-    // Limpiar
     container.innerHTML = '';
 
     if(transType === 'Vender'){
-        // Si vende a wallets tipo Zinli/Wally/USDT mostramos correo fijo
-        if(['zinli','wally','usdt'].includes(wallet)){
-            const html = `
-                <div class="flash-message" style="border-color: var(--primary-color); text-align:left;">
-                    <strong>Enviar a este correo:</strong><br>
-                    <div style="margin-top:8px; font-weight:700; color:var(--text-color);">${mueveEmail}</div>
-                    <div style="color:var(--text-muted); margin-top:6px; font-size:13px;">Usa este correo en la plataforma de destino para completar la recepción.</div>
-                </div>
-            `;
-            container.innerHTML = html;
-            return;
-        }
-        // Si vende pero el método es PagoMovil, intentar mostrar datos del método seleccionado
-
-        if(owner || phone || bank || ci){
-            container.innerHTML = `
-                <div class="flash-message" style="border-color: var(--primary-color); text-align:left;">
-                    <strong>Datos de Pago Móvil:</strong><br>
-                    <span class="text-muted">Titular:</span> ${owner || '-'}<br>
-                    <span class="text-muted">Teléfono:</span> ${phone || '-'}<br>
-                    <span class="text-muted">Banco:</span> ${bank || '-'}<br>
-                    <span class="text-muted">CI/RIF:</span> ${ci || '-'}
-                </div>
-            `;
-            return;
-        }
-
-        // Fallback
-        container.innerHTML = `<div class="flash-message">No se han encontrado datos del método seleccionado.</div>`;
-        return;
-    }
-
-    // Si es Comprar (u otro), mostrar los datos de PagoMovil (normal)
-
-    if(owner || phone || bank || ci){
+        // Si vende (está enviando sus fondos a Mueve)
         container.innerHTML = `
-            <div class="flash-message" style="border-color: var(--primary-color); text-align:left;">
-                <strong>Datos de Pago Móvil:</strong><br>
-                <span class="text-muted">Titular:</span> ${owner || '-'}<br>
-                <span class="text-muted">Teléfono:</span> ${phone || '-'}<br>
-                <span class="text-muted">Banco:</span> ${bank || '-'}<br>
-                <span class="text-muted">CI/RIF:</span> ${ci || '-'}
+            <div class="space-y-4">
+                <div class="flex items-center gap-2 text-primary">
+                    <span class="material-symbols-outlined">info</span>
+                    <span class="font-bold text-sm uppercase tracking-wider">Transferir Fondos</span>
+                </div>
+                <div class="bg-surface-container rounded-2xl p-5 border border-outline-variant">
+                    <p class="text-xs text-on-surface-variant mb-1">Envía tus ${wallet.toUpperCase()} a este correo:</p>
+                    <div class="flex items-center justify-between gap-4">
+                        <span class="font-black text-on-surface text-lg truncate">${mueveEmail}</span>
+                        <button onclick="navigator.clipboard.writeText('${mueveEmail}'); showNotification('success', 'Copiado')" class="p-2 rounded-xl bg-primary/10 text-primary hover:bg-primary/20 transition-all">
+                            <span class="material-symbols-outlined text-sm">content_copy</span>
+                        </button>
+                    </div>
+                </div>
+                <p class="text-[11px] text-on-surface-variant italic">Una vez realizado el envío, introduce el número de referencia abajo para confirmar.</p>
             </div>
         `;
-        return;
+    } else {
+        // Si compra (envía Pago Móvil a Mueve)
+        container.innerHTML = `
+            <div class="space-y-4">
+                <div class="flex items-center gap-2 text-primary">
+                    <span class="material-symbols-outlined">payments</span>
+                    <span class="font-bold text-sm uppercase tracking-wider">Datos para Pago Móvil</span>
+                </div>
+                <div class="bg-surface-container rounded-2xl p-5 border border-outline-variant space-y-3">
+                    <div class="flex justify-between items-center border-b border-outline-variant/30 pb-2">
+                        <span class="text-xs text-on-surface-variant">Banco:</span>
+                        <span class="text-sm font-bold text-on-surface">${bank}</span>
+                    </div>
+                    <div class="flex justify-between items-center border-b border-outline-variant/30 pb-2">
+                        <span class="text-xs text-on-surface-variant">Teléfono:</span>
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm font-bold text-on-surface">${phone}</span>
+                            <button onclick="navigator.clipboard.writeText('${phone}'); showNotification('success', 'Copiado')" class="text-primary hover:scale-110 transition-transform">
+                                <span class="material-symbols-outlined text-xs">content_copy</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center border-b border-outline-variant/30 pb-2">
+                        <span class="text-xs text-on-surface-variant">CI/RIF:</span>
+                        <span class="text-sm font-bold text-on-surface">${ci}</span>
+                    </div>
+                    <div class="flex justify-between items-center pt-1">
+                        <span class="text-xs text-on-surface-variant">Titular:</span>
+                        <span class="text-sm font-bold text-on-surface">${owner}</span>
+                    </div>
+                </div>
+                <p class="text-[11px] text-on-surface-variant italic">Realiza el pago móvil y coloca el número de referencia bancaria abajo.</p>
+            </div>
+        `;
     }
-
-    // Si no hay datos, instrucción genérica
-    container.innerHTML = `<div class="flash-message">Selecciona un método en el paso anterior para ver los datos aquí.</div>`;
 }
 
 // Llamar renderPaymentInfo cuando cambian selectores relevantes
@@ -398,15 +413,7 @@ function calculateAndDisplay(){
     }
 }
 
-// Reutilizar la función existente setTransactionType (ya definida arriba) para recalcular
-const originalSetTransactionType = window.setTransactionType;
-window.setTransactionType = function(type){
-    if(typeof originalSetTransactionType === 'function') originalSetTransactionType(type);
-    // Repoblar selector de métodos para reflejar el nuevo tipo (Comprar/Vender)
-    if(typeof populateBankSelectFromInjectedData === 'function') populateBankSelectFromInjectedData();
-    // Recalcular montos y labels
-    calculateAndDisplay();
-}
+// Nota: setTransactionType ya está definido al principio y maneja la lógica de actualización.
 
 // Listeners adicionales
 document.addEventListener('DOMContentLoaded', function(){

@@ -176,41 +176,6 @@
     window.PAYMENT_METHODS = <?php echo json_encode($payment_methods ?? []); ?>;
     window.CSRF_TOKEN = <?php echo json_encode($csrf_token ?? ''); ?>;
     window.MUEVE_PAYMENT_CONFIG = <?php echo json_encode($mueve_payment_config ?? []); ?>;
-
-    function setTransactionType(type) {
-        document.getElementById('inputType').value = type;
-        const btnComprar = document.getElementById('tab-comprar');
-        const btnVender = document.getElementById('tab-vender');
-        
-        if (type === 'Comprar') {
-            btnComprar.className = "flex-1 py-3 px-6 rounded-full font-headline font-bold text-sm transition-all duration-300 bg-primary text-on-primary-container shadow-lg";
-            btnVender.className = "flex-1 py-3 px-6 rounded-full font-headline font-bold text-sm transition-all duration-300 text-on-surface-variant hover:text-on-surface";
-        } else {
-            btnVender.className = "flex-1 py-3 px-6 rounded-full font-headline font-bold text-sm transition-all duration-300 bg-primary text-on-primary-container shadow-lg";
-            btnComprar.className = "flex-1 py-3 px-6 rounded-full font-headline font-bold text-sm transition-all duration-300 text-on-surface-variant hover:text-on-surface";
-        }
-        
-        // This function should be defined in app.js, calling it to update the view
-        if (typeof window.updateTransactionView === 'function') {
-            window.updateTransactionView();
-        }
-    }
-
-    function goToStep(step) {
-        const s1 = document.getElementById('step1');
-        const s2 = document.getElementById('step2');
-        if (step === 1) {
-            s1.classList.remove('hidden');
-            s2.classList.add('hidden');
-        } else {
-            s1.classList.add('hidden');
-            s2.classList.remove('hidden');
-            // Populate payment info if available
-            if (typeof window.populatePaymentInfo === 'function') {
-                window.populatePaymentInfo();
-            }
-        }
-    }
 </script>
 
 <?php require_once __DIR__ . '/../layouts/footer.php'; ?>
