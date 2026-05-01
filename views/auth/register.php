@@ -1,292 +1,84 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iniciar Sesión | ExchangeApp</title>
-    <link rel="icon" type="image/x-icon" href="<?php echo $icon; ?>">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        /* ========================================
-           ESTILOS LOGIN (Over9k Dark Theme)
-           ========================================
-        */
-        :root {
-            /* Paleta de colores */
-            --bg-color: #050505;
-            --surface-color: #121212;
-            --input-bg: #1e1e1e;
-            --border-color: #2a2a2a;
-            
-            --text-color: #e0e0e0;
-            --text-muted: #888888;
-            
-            --primary-color: #2F80ED;
-            --primary-hover: #1a6cdb;
-            --danger-color: #FF4D4D;
-            
-            --border-radius: 24px;
-            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-        }
+<?php
+$title = "Registro | Mueve";
+require_once __DIR__ . '/../layouts/header.php';
+?>
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        }
+<div class="min-h-[calc(100vh-200px)] flex items-center justify-center px-6 py-12">
+    <div class="w-full max-w-md">
+        <!-- Logo/Header -->
+        <div class="text-center mb-10">
+            <a href="/" class="inline-block text-4xl font-black italic text-[#ADC7FF] tracking-tighter font-headline mb-4">Mueve</a>
+            <h2 class="text-2xl font-headline font-bold text-on-surface">Crea tu cuenta</h2>
+            <p class="text-on-surface-variant mt-2">Únete a la plataforma de divisas más rápida</p>
+        </div>
 
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        /* Contenedor Principal */
-        .auth-container {
-            width: 100%;
-            max-width: 400px;
-            animation: fadeIn 0.5s ease-out;
-        }
-
-        /* Tarjeta */
-        .auth-card {
-            background-color: var(--surface-color);
-            border: 1px solid var(--border-color);
-            border-radius: var(--border-radius);
-            padding: 40px 30px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* Efecto de luz sutil en la parte superior */
-        .auth-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
-            opacity: 0.7;
-        }
-
-        /* Header */
-        .auth-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .auth-header .logo-icon {
-            font-size: 40px;
-            color: var(--primary-color);
-            margin-bottom: 15px;
-            display: inline-block;
-            filter: drop-shadow(0 0 10px rgba(47, 128, 237, 0.4));
-        }
-
-        .auth-header h2 {
-            font-size: 24px;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 5px;
-        }
-
-        .auth-header p {
-            color: var(--text-muted);
-            font-size: 14px;
-        }
-
-        /* Formularios e Inputs */
-        .form-group {
-            margin-bottom: 20px;
-            position: relative;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--text-muted);
-            margin-left: 5px;
-        }
-
-        .input-wrapper {
-            position: relative;
-        }
-
-        .input-wrapper i {
-            position: absolute;
-            left: 18px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-muted);
-            transition: var(--transition);
-        }
-
-        input {
-            width: 100%;
-            background-color: var(--input-bg);
-            border: 1px solid transparent;
-            color: var(--text-color);
-            padding: 14px 18px 14px 45px; /* Padding extra a la izquierda para el icono */
-            border-radius: 16px;
-            outline: none;
-            font-size: 14px;
-            transition: var(--transition);
-        }
-
-        input:focus {
-            background-color: #252525;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 2px rgba(47, 128, 237, 0.15);
-        }
-
-        input:focus + i,
-        .input-wrapper:focus-within i {
-            color: var(--primary-color);
-        }
-
-        /* Botón */
-        .btn-primary {
-            width: 100%;
-            background-color: var(--primary-color);
-            color: #fff;
-            border: none;
-            padding: 14px;
-            font-size: 15px;
-            font-weight: 600;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: var(--transition);
-            margin-top: 10px;
-            box-shadow: 0 4px 15px rgba(47, 128, 237, 0.4);
-        }
-
-        .btn-primary:hover {
-            background-color: var(--primary-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(47, 128, 237, 0.6);
-        }
-
-        /* Footer */
-        .auth-footer {
-            margin-top: 25px;
-            text-align: center;
-            font-size: 14px;
-            color: var(--text-muted);
-        }
-
-        .auth-footer a {
-            color: var(--primary-color);
-            text-decoration: none;
-            font-weight: 500;
-            transition: var(--transition);
-        }
-
-        .auth-footer a:hover {
-            text-decoration: underline;
-            color: #fff;
-        }
-
-        /* Alertas */
-        .flash-message {
-            background: rgba(255, 77, 77, 0.1);
-            border: 1px solid rgba(255, 77, 77, 0.3);
-            color: var(--danger-color);
-            padding: 12px;
-            border-radius: 12px;
-            font-size: 13px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-    </style>
-</head>
-<body class="auth-body">
-
-    <div class="auth-container">
-        
-        <div class="auth-card">
-            <div class="auth-header">
-                <!-- Icono de marca -->
-                <i class="fa-solid fa-wallet logo-icon"></i>
-                <h2>Registro</h2>
-                <p>Ingresa a tu panel de divisas</p>
-            </div>
-
-            <!-- mostrar mensaje si $error existe -->
+        <!-- Register Card -->
+        <div class="glass-panel rounded-[2rem] p-8 border border-outline-variant shadow-2xl">
+            <!-- Flash Messages -->
             <?php if (isset($error)): ?>
-                <div class="flash-message error">
-                    <i class="fa-solid fa-circle-exclamation"></i>
+                <div class="flex items-center gap-3 p-4 mb-6 rounded-2xl bg-error/10 border border-error/20 text-error text-sm">
+                    <span class="material-symbols-outlined text-xl">error</span>
                     <span><?php echo htmlspecialchars($error); ?></span>
                 </div>
             <?php endif; ?>
+
             <?php if (isset($success)): ?>
-                <div class="flash-message success">
-                    <i class="fa-solid fa-circle-check"></i>
+                <div class="flex items-center gap-3 p-4 mb-6 rounded-2xl bg-primary/10 border border-primary/20 text-primary text-sm">
+                    <span class="material-symbols-outlined text-xl">check_circle</span>
                     <span><?php echo htmlspecialchars($success); ?></span>
                 </div>
             <?php endif; ?>
 
-            <form action="/register" method="POST">
+            <form action="/register" method="POST" class="space-y-6">
                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token ?? ''); ?>">
 
-                <div class="form-group">
-                    <label for="name">Nombre</label>
-                    <div class="input-wrapper">
-                        <input type="text" name="name" id="name" placeholder="Nombre" required autofocus>
-                        <i class="fa-regular fa-user"></i>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="email">Correo Electrónico</label>
-                    <div class="input-wrapper">
-                        <input type="email" name="email" id="email" placeholder="ejemplo@correo.com" required autofocus>
-                        <i class="fa-regular fa-envelope"></i>
+                <!-- Name Field -->
+                <div>
+                    <label for="name" class="block text-sm font-label text-on-surface-variant mb-2 ml-1">Nombre Completo</label>
+                    <div class="relative">
+                        <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">person</span>
+                        <input type="text" name="name" id="name" 
+                               class="w-full bg-surface-container border border-outline-variant rounded-2xl py-3.5 pl-12 pr-4 text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all" 
+                               placeholder="Tu nombre" required autofocus>
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="password">Contraseña</label>
-                    <div class="input-wrapper">
-                        <input type="password" name="password" id="password" placeholder="••••••••" required>
-                        <i class="fa-solid fa-lock"></i>
+                <!-- Email Field -->
+                <div>
+                    <label for="email" class="block text-sm font-label text-on-surface-variant mb-2 ml-1">Correo Electrónico</label>
+                    <div class="relative">
+                        <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">mail</span>
+                        <input type="email" name="email" id="email" 
+                               class="w-full bg-surface-container border border-outline-variant rounded-2xl py-3.5 pl-12 pr-4 text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all" 
+                               placeholder="tu@correo.com" required>
                     </div>
                 </div>
 
-                <!-- Opcional: Recordar / Olvidé contraseña -->
-                <div style="display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 12px;">
-                    <label style="color: var(--text-muted); display: flex; align-items: center; gap: 5px; cursor: pointer;">
-                        <input type="checkbox" style="width: auto; margin: 0;"> Recordarme
-                    </label>
-                    <a href="#" style="color: var(--text-muted); text-decoration: none;">¿Olvidaste tu clave?</a>
+                <!-- Password Field -->
+                <div>
+                    <label for="password" class="block text-sm font-label text-on-surface-variant mb-2 ml-1">Contraseña</label>
+                    <div class="relative">
+                        <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">lock</span>
+                        <input type="password" name="password" id="password" 
+                               class="w-full bg-surface-container border border-outline-variant rounded-2xl py-3.5 pl-12 pr-4 text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all" 
+                               placeholder="••••••••" required>
+                    </div>
                 </div>
 
-                <button type="submit" class="btn-primary">
-                    Ingresar <i class="fa-solid fa-arrow-right" style="margin-left: 8px;"></i>
+                <button type="submit" class="btn-gradient w-full py-4 rounded-full font-headline font-bold text-on-primary-container flex items-center justify-center gap-2 hover:opacity-90 transition-all active:scale-[0.98] mt-4 shadow-lg shadow-primary/20">
+                    Registrarme
+                    <span class="material-symbols-outlined">how_to_reg</span>
                 </button>
             </form>
 
-            <div class="auth-footer">
-                <p>¿Ya tienes cuenta? <a href="/login">Entra aquí</a></p>
+            <div class="mt-8 text-center">
+                <p class="text-on-surface-variant text-sm">
+                    ¿Ya tienes cuenta? 
+                    <a href="/login" class="text-primary font-bold hover:underline">Inicia sesión aquí</a>
+                </p>
             </div>
         </div>
-
     </div>
+</div>
 
-</body>
-</html>
+<?php require_once __DIR__ . '/../layouts/footer.php'; ?>

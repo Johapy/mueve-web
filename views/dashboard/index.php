@@ -45,10 +45,16 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div class="space-y-2">
                                 <label class="block text-sm font-label text-on-surface-variant ml-1">Plataforma (Billetera)</label>
-                                <select name="type_pay" id="walletSelect" class="w-full bg-surface-container border border-outline-variant rounded-2xl py-3.5 px-4 text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all appearance-none cursor-pointer">
-                                    <option value="Zinli">Zinli</option>
-                                    <option value="Wally">Wally</option>
-                                    <option value="USDT">USDT (Binance)</option>
+                                <select name="type_pay" id="walletSelect">
+                                    <option value="Zinli">
+                                        <span class="icon">💳</span> Zinli
+                                    </option>
+                                    <option value="Wally">
+                                        <span class="icon">📱</span> Wally
+                                    </option>
+                                    <option value="USDT">
+                                        <span class="icon">🪙</span> USDT (Binance)
+                                    </option>
                                 </select>
                             </div>
 
@@ -63,7 +69,7 @@
 
                         <div class="space-y-2">
                             <label class="block text-sm font-label text-on-surface-variant ml-1">Selecciona tu método de pago</label>
-                            <select name="bank" id="bankSelect" class="w-full bg-surface-container border border-outline-variant rounded-2xl py-3.5 px-4 text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all appearance-none cursor-pointer">
+                            <select name="bank" id="bankSelect">
                                 <?php
                                 $methods = $payment_methods ?? [];
                                 $initialWallet = 'Zinli';
@@ -92,7 +98,9 @@
                                         $mail = htmlspecialchars($method['mail_pay'] ?? '');
                                         $type = htmlspecialchars($method['type'] ?? '');
 
-                                        echo "<option value=\"$id\" data-bank=\"$bank\" data-phone=\"$phone\" data-ci=\"$ci\" data-mail=\"$mail\" data-owner=\"" . htmlspecialchars($method['owner_name'] ?? '') . "\" data-type=\"$type\">$owner</option>";
+                                        echo "<option value=\"$id\" data-bank=\"$bank\" data-phone=\"$phone\" data-ci=\"$ci\" data-mail=\"$mail\" data-owner=\"" . htmlspecialchars($method['owner_name'] ?? '') . "\" data-type=\"$type\">
+                                                <span class=\"icon\">🏦</span> $owner
+                                              </option>";
                                     }
                                 }
                                 ?>
