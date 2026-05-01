@@ -124,42 +124,119 @@
             to { transform: translateX(100%); opacity: 0; }
         }
         /* =========================================
-           CUSTOM SELECT STYLES (Robust & Compatible)
+           PREMIUM SELECT (Appearance: base-select)
+           Inspirado en el ejemplo del usuario
            ========================================= */
+        select,
+        ::picker(select) {
+            appearance: base-select;
+        }
+
         select {
-            appearance: none;
             background-color: #1d2023; /* surface-container */
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='24' viewBox='0 -960 960 960' width='24' fill='%23c1c6d7'%3E%3Cpath d='M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 1rem center;
-            background-size: 1.5em;
             color: #e1e2e7; /* on-surface */
             border: 1px solid rgba(65, 71, 84, 0.15); /* outline-variant */
             border-radius: 1rem;
-            padding: 0.875rem 3rem 0.875rem 1.25rem;
+            padding: 14px 18px;
             font-weight: 500;
             width: 100%;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: 0.4s;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
-        select:hover {
-            border-color: rgba(173, 199, 255, 0.4);
-            background-color: #272a2e;
-        }
-
+        select:hover,
         select:focus {
-            outline: none;
+            background-color: #272a2e; /* surface-container-high */
             border-color: #adc7ff; /* primary */
-            box-shadow: 0 0 0 4px rgba(173, 199, 255, 0.1);
-            background-color: #272a2e;
         }
 
-        /* Estilo para las opciones (limitado por el navegador, pero garantizamos fondo oscuro) */
+        select::picker-icon {
+            color: #c1c6d7; /* on-surface-variant */
+            transition: 0.4s rotate;
+        }
+
+        select:open::picker-icon {
+            rotate: 180deg;
+        }
+
+        ::picker(select) {
+            background-color: #111417; /* surface */
+            border: 1px solid rgba(65, 71, 84, 0.3);
+            border-radius: 1rem;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+            padding: 8px;
+            opacity: 0;
+            transition: all 0.4s allow-discrete;
+            top: calc(anchor(bottom) + 8px);
+            left: anchor(left);
+            width: anchor-size(width);
+        }
+
+        :open::picker(select) {
+            opacity: 1;
+        }
+
+        @starting-style {
+            :open::picker(select) {
+                opacity: 0;
+            }
+        }
+
         option {
-            background-color: #111417;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            margin-bottom: 2px;
+            border-radius: 0.75rem;
+            background-color: transparent;
+            color: #c1c6d7;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: 0.4s;
+        }
+
+        option:hover,
+        option:focus {
+            background-color: rgba(255, 255, 255, 0.05);
             color: #e1e2e7;
-            padding: 10px;
+            outline: none;
+        }
+
+        option:checked {
+            background-color: rgba(173, 199, 255, 0.1);
+            color: #adc7ff;
+            font-weight: bold;
+        }
+
+        option .icon {
+            font-size: 1.6rem;
+        }
+
+        option::checkmark {
+            content: "☑️";
+            margin-left: auto;
+        }
+
+        selectedcontent .icon {
+            display: none;
+        }
+
+        @supports not (appearance: base-select) {
+            .select-fallback-msg {
+                display: block !important;
+                background: #4c1a00;
+                color: #ffb695;
+                padding: 10px;
+                border-radius: 12px;
+                font-size: 12px;
+                margin-top: 8px;
+                border: 1px solid #ef6719;
+            }
         }
     </style>
 </head>

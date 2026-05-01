@@ -205,7 +205,7 @@ function populateBankSelectFromInjectedData(){
     filtered.forEach(m => {
         const opt = document.createElement('option');
         opt.value = m.id;
-        opt.textContent = m.owner_name || m.bank || 'Método';
+        opt.innerHTML = `<span class="icon">🏦</span> ${m.owner_name || m.bank || 'Método'}`;
         opt.dataset.method = JSON.stringify(m);
         bankSelect.appendChild(opt);
     });
