@@ -123,115 +123,43 @@
             from { transform: translateX(0); opacity: 1; }
             to { transform: translateX(100%); opacity: 0; }
         }
-
         /* =========================================
-           PREMIUM SELECT (Appearance: base-select)
+           CUSTOM SELECT STYLES (Robust & Compatible)
            ========================================= */
-        select,
-        ::picker(select) {
-            appearance: base-select;
-        }
-
         select {
+            appearance: none;
             background-color: #1d2023; /* surface-container */
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='24' viewBox='0 -960 960 960' width='24' fill='%23c1c6d7'%3E%3Cpath d='M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1.5em;
             color: #e1e2e7; /* on-surface */
             border: 1px solid rgba(65, 71, 84, 0.15); /* outline-variant */
             border-radius: 1rem;
-            padding: 14px 18px;
+            padding: 0.875rem 3rem 0.875rem 1.25rem;
             font-weight: 500;
             width: 100%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            transition: all 0.3s ease;
-        }
-
-        select:hover,
-        select:focus {
-            background-color: #272a2e; /* surface-container-high */
-            border-color: #adc7ff; /* primary */
-            box-shadow: 0 0 0 2px rgba(173, 199, 255, 0.2);
-        }
-
-        select::picker-icon {
-            color: #c1c6d7; /* on-surface-variant */
-            font-size: 1.2em;
-            transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-        }
-
-        select:open::picker-icon {
-            transform: rotate(180deg);
-        }
-
-        ::picker(select) {
-            background-color: #111417; /* surface */
-            border: 1px solid rgba(65, 71, 84, 0.3);
-            border-radius: 1rem;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
-            padding: 8px;
-            top: calc(anchor(bottom) + 8px);
-            left: anchor(left);
-            width: anchor-size(width);
-            opacity: 0;
-            transform: translateY(-10px);
-            transition: opacity 0.3s ease, transform 0.3s ease, display 0.3s allow-discrete;
-        }
-
-        ::picker(select):popover-open {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        @starting-style {
-            ::picker(select):popover-open {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-        }
-
-        option {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 16px;
-            margin-bottom: 2px;
-            border-radius: 0.75rem;
-            background-color: transparent;
-            color: #c1c6d7;
-            font-weight: 500;
-            border: none;
             cursor: pointer;
             transition: all 0.2s ease;
         }
 
-        option:hover,
-        option:focus {
-            background-color: rgba(255, 255, 255, 0.05);
-            color: #e1e2e7;
+        select:hover {
+            border-color: rgba(173, 199, 255, 0.4);
+            background-color: #272a2e;
+        }
+
+        select:focus {
             outline: none;
+            border-color: #adc7ff; /* primary */
+            box-shadow: 0 0 0 4px rgba(173, 199, 255, 0.1);
+            background-color: #272a2e;
         }
 
-        option:checked {
-            background-color: rgba(173, 199, 255, 0.1);
-            color: #adc7ff;
-            font-weight: 600;
-        }
-
-        option .icon {
-            font-size: 1.4rem;
-        }
-
-        option::checkmark {
-            content: "✓";
-            margin-left: auto;
-            font-weight: bold;
-            color: #adc7ff;
-            display: none;
-        }
-
-        option:checked::checkmark {
-            display: block;
+        /* Estilo para las opciones (limitado por el navegador, pero garantizamos fondo oscuro) */
+        option {
+            background-color: #111417;
+            color: #e1e2e7;
+            padding: 10px;
         }
     </style>
 </head>
